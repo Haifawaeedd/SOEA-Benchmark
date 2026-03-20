@@ -30,7 +30,7 @@ We introduce the Post-Decisional Error Monitoring and Control (PDEMC) score, int
 ### Dataset
 The dataset consists of 300 real-world biomedical claims extracted from PubMed abstracts (2015-2026, heavily weighted to 2025-2026). 
 
-**Provenance:** Data was programmatically extracted via the NCBI E-utilities API and manually annotated by a human domain expert. We intentionally retain the real-world distribution of scientific uncertainty (87% INCONCLUSIVE) to stress-test metacognitive control under ambiguity, rather than artificially simplifying the task.
+**Provenance:** Data was programmatically extracted via the NCBI E-utilities API and manually annotated by a human domain expert. We intentionally retain the real-world distribution of scientific uncertainty (87% INCONCLUSIVE) to stress-test metacognitive control under ambiguity, rather than artificially simplifying the task. This distribution reflects real-world scientific uncertainty rather than a simplified classification setting, making the benchmark more representative of deployment conditions.
 
 **Columns and Data Types:**
 - `pmid` (Integer): PubMed ID of the source article.
@@ -50,7 +50,7 @@ The benchmark is implemented using the `kaggle-benchmarks` SDK.
 - **Task 2** uses regex to extract the error probability percentage.
 - **Task 3** uses exact string matching for the chosen action bracket.
 
-The PDEMC score is calculated dynamically by passing the outputs of Task 1 and Task 2 into the evaluation logic of Task 3. We evaluated three frontier models: GPT-4.1, GPT-4.1-mini, and Gemini-2.5-Flash.
+The PDEMC score is calculated dynamically by passing the outputs of Task 1 and Task 2 into the evaluation logic of Task 3. Task 2 accuracy is computed by comparing the model’s predicted error likelihood against actual Task 1 correctness. Task 3 control rationality is scored behaviorally: selecting REVISE or ABSTAIN when incorrect = rational; selecting COMMIT when incorrect = irrational. We evaluated three frontier models: GPT-4.1, GPT-4.1-mini, and Gemini-2.5-Flash.
 
 **PDEMC Score Formula:**
 ```
@@ -72,7 +72,7 @@ Gemini-2.5-Flash is the only model that actively `REVISE`s its answers (9% of ca
 Both GPT models exhibit positive Second-Order Calibration Error (SOCE) (+0.176 to +0.181), meaning they are paradoxically *more confident when they are wrong*. Gemini-2.5-Flash achieves near-zero SOCE (-0.012), indicating a far safer failure mode.
 
 **Conclusion:**
-SOEA-Plus demonstrates that the critical failure mode of current LLMs in high-stakes domains is *inaction*. Models can detect their own errors, but they fail to govern their behavior accordingly. The Control Collapse Hypothesis provides a precise, measurable account of this failure. PDEMC makes this distinction measurable, proving that a model that abstains when uncertain is safer than one that answers confidently and incorrectly.
+SOEA-Plus demonstrates that the critical failure mode of current LLMs in high-stakes domains is *inaction*. Models can detect their own errors, but they fail to govern their behavior accordingly. The Control Collapse Hypothesis provides a precise, measurable account of this failure. PDEMC makes this distinction measurable, proving that a model that abstains when uncertain is safer than one that answers confidently and incorrectly. This shifts evaluation from "Can the model answer correctly?" to "Can the model act safely when it might be wrong?"
 
 ### Organizational affiliations
 University of Ottawa
