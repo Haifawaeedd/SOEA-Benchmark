@@ -1,0 +1,14 @@
+{
+  "model": "GPT-4.1",
+  "n_examples": 300,
+  "accuracy": 0.83,
+  "SOCE": 0.1762,
+  "ECE": 0.3409,
+  "mean_conf_correct": 0.7206,
+  "mean_conf_wrong": 0.8969,
+  "per_label_accuracy": {
+    "SUPPORTED": 0.8667,
+    "INCONCLUSIVE": 0.8893,
+    "REFUTED": 0.1304
+  }
+}
