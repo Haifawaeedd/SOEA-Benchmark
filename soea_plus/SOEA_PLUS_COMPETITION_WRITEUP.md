@@ -87,7 +87,7 @@ University of Ottawa
 [5] Ma, Z., et al. (2025). Large Language Models Have Intrinsic Meta-Cognition, but Need a Good Lens. *Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP)*.
 [6] Machcha, S., et al. (2026). Knowing When to Abstain: Medical LLMs Under Clinical Uncertainty. *arXiv preprint arXiv:2601.12471*.
 [7] Asgari, E., et al. (2025). A framework to assess clinical safety and hallucination rates of LLMs for medical text summarisation. *npj Digital Medicine*, 8, 274.
-[8] Owayed, H. (2025). SOEA: Second-Order Error Awareness Benchmark for LLM Metacognitive Calibration in Biomedical NLI. *Kaggle Google DeepMind AGI Cognitive Benchmarks Competition*.
+[8] Owayed, H. (2025). SOEA: Second-Order Error Awareness Benchmark for LLM Metacognitive Calibration in Biomedical NLI. *Kaggle × Google DeepMind AGI Cognitive Benchmarks Competition Submission*.
 
 ### Code & Data Availability
 - **GitHub Repository:** https://github.com/Haifawaeedd/SOEA-Benchmark
