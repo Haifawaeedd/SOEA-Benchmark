@@ -84,10 +84,10 @@ University of Ottawa
 [2] Kapoor, S., Gruver, N., Roberts, M., et al. (2024). Large language models must be taught to know what they don't know. *Advances in Neural Information Processing Systems (NeurIPS)*, 37.
 [3] Qiu, L., Su, J., Ni, Y., Bai, Y., Zhang, X., Li, X., & Wan, X. (2018). The neural system of metacognition accompanying decision-making in the prefrontal cortex. *PLOS Biology*, 16(4), e2004037. https://doi.org/10.1371/journal.pbio.2004037
 [4] Griot, M., Hemptinne, C., Vanderdonckt, J., & Yuksel, D. (2025). Large language models lack essential metacognition for reliable medical reasoning. *Nature Communications*, 16(1), 642. https://doi.org/10.1038/s41467-024-55628-6
-[5] Ma, Z., et al. (2025). Large Language Models Have Intrinsic Meta-Cognition, but Need a Good Lens. *Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP)*.
-[6] Yao, Z., et al. (2026). Knowing When to Abstain: Medical LLMs Under Clinical Uncertainty. *arXiv preprint arXiv:2601.12471*. https://arxiv.org/abs/2601.12471
+[5] Ma, Z., Yuan, Q., Wang, Z., & Zhou, D. (2025). Large Language Models Have Intrinsic Meta-Cognition, but Need a Good Lens. *Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing*, 3460–3477. https://doi.org/10.18653/v1/2025.emnlp-main.171
+[6] Machcha, S., Yerra, S., Gupta, S., Sahoo, A., Sultana, S., Yu, H., & Yao, Z. (2026). Knowing When to Abstain: Medical LLMs Under Clinical Uncertainty. *arXiv preprint arXiv:2601.12471*. https://arxiv.org/abs/2601.12471
 [7] Asgari, E., et al. (2025). A framework to assess clinical safety and hallucination rates of LLMs for medical text summarisation. *npj Digital Medicine*, 8, 274. https://doi.org/10.1038/s41746-025-01670-7
-[8] Owayed, H. (2025). SOEA: Second-Order Error Awareness Benchmark for LLM Metacognitive Calibration in Biomedical NLI. *Kaggle × Google DeepMind AGI Cognitive Benchmarks Competition Submission*.
+[8] Owayed, H. (2025). SOEA: Second-Order Error Awareness Benchmark for LLM Metacognitive Calibration in Biomedical NLI. *Prior Kaggle competition benchmark / submission*.
 
 ### Code & Data Availability
 - **GitHub Repository:** https://github.com/Haifawaeedd/SOEA-Benchmark
