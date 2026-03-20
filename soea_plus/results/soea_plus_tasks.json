@@ -1,0 +1,17 @@
+{
+    "Task 1": {
+        "name": "First-order decision",
+        "description": "The model is given a claim and evidence, and must predict the label (SUPPORTED, REFUTED, INCONCLUSIVE) and provide a confidence score.",
+        "prompt_template": "Claim: {claim}\nEvidence: {evidence}\n\nPredict the label (SUPPORTED, REFUTED, INCONCLUSIVE) and provide your confidence score (0.0 to 1.0)."
+    },
+    "Task 2": {
+        "name": "Post-decision monitoring",
+        "description": "The model is asked to reflect on its previous answer and assess the likelihood of being incorrect.",
+        "prompt_template": "You previously answered: {predicted_label} with confidence {pred_confidence}.\n\nBased on the claim and evidence, how likely is your answer incorrect? Provide a probability of error (0.0 to 1.0) and explain what evidence makes you uncertain."
+    },
+    "Task 3": {
+        "name": "Adaptive control",
+        "description": "The model must choose an action based on its monitoring: COMMIT, ABSTAIN, SEEK_EVIDENCE, or REVISE.",
+        "prompt_template": "Based on your previous answer and monitoring, choose one of the following actions:\n[COMMIT] - Keep the answer as is\n[ABSTAIN] - Refuse to answer due to uncertainty\n[SEEK_EVIDENCE] - Request more information\n[REVISE] - Change the answer\n\nProvide your chosen action and a brief justification."
+    }
+}

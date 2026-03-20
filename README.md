@@ -1,4 +1,4 @@
-# SOEA Benchmark — Second-Order Error Awareness
+# SOEA-Benchmark — Second-Order Error Awareness + PDEMC
 
 > **Kaggle Competition:** [Google DeepMind AGI Cognitive Benchmarks](https://www.kaggle.com/competitions/agi-cognitive-benchmarks) | Prize: $20,000 | Deadline: April 16, 2026
 
@@ -9,7 +9,28 @@
 
 ---
 
-## Overview
+## ⭐ NEW: SOEA-Plus (PDEMC) — Winner-Level Upgrade
+
+> **"Models do not fail at knowing — they fail at acting on uncertainty."**  
+> — *The Control Collapse Hypothesis*
+
+SOEA has been upgraded to **SOEA-Plus (Post-Decisional Error Monitoring and Control)** — a full 3-task cognitive benchmark grounded in neuroscience. See the [`soea_plus/`](soea_plus/) directory for the complete implementation.
+
+### Control Collapse: Visual Proof
+
+![Control Collapse](soea_plus/figures/soea_plus_control_collapse.png)
+
+| Model | Task 1 Acc | Monitoring Acc | Control Rationality | PDEMC Score |
+|-------|------------|----------------|---------------------|-------------|
+| **GPT-4.1** | 83.0% | **83.0%** | 72.0% | **0.7970** |
+| **Gemini-2.5-Flash** | **84.0%** | 79.7% | **74.7%** | 0.7957 |
+| **GPT-4.1-mini** | 80.0% | 80.0% | 48.3% | 0.7050 |
+
+📄 **[Read the full competition writeup →](soea_plus/SOEA_PLUS_COMPETITION_WRITEUP.md)**
+
+---
+
+## SOEA v1 — Overview
 
 **SOEA (Second-Order Error Awareness)** is a task-specific benchmark for evaluating second-order error awareness in large language models (LLMs) — measuring whether models *know when they are wrong*, a critical metacognitive capability for safe AI deployment in biomedical domains.
 
