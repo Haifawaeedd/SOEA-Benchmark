@@ -50,7 +50,9 @@ The benchmark is implemented using the `kaggle-benchmarks` SDK.
 - **Task 2** uses regex to extract the error probability percentage.
 - **Task 3** uses exact string matching for the chosen action bracket.
 
-The PDEMC score is calculated dynamically by passing the outputs of Task 1 and Task 2 into the evaluation logic of Task 3. Task 2 accuracy is computed by comparing the model’s predicted error likelihood against actual Task 1 correctness. Task 3 control rationality is scored behaviorally: selecting REVISE or ABSTAIN when incorrect = rational; selecting COMMIT when incorrect = irrational. We evaluated three frontier models: GPT-4.1, GPT-4.1-mini, and Gemini-2.5-Flash.
+The PDEMC score is calculated dynamically by passing the outputs of Task 1 and Task 2 into the evaluation logic of Task 3. Task 2 accuracy is computed by comparing the model’s predicted error likelihood against actual Task 1 correctness. Control Rationality is evaluated conditionally on correctness:
+- If the model is incorrect: `REVISE` or `ABSTAIN` = rational; `COMMIT` = irrational.
+- If the model is correct: `COMMIT` = rational; `REVISE` or `ABSTAIN` = unnecessary but not penalized. We evaluated three frontier models: GPT-4.1, GPT-4.1-mini, and Gemini-2.5-Flash.
 
 **PDEMC Score Formula:**
 ```
