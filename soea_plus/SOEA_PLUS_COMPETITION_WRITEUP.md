@@ -9,9 +9,12 @@
 
 ## 1. The Core Claim: Control Collapse Hypothesis
 
-> **Models do not fail at *knowing* — they fail at *acting* on uncertainty.**
+> **Modern LLMs do not primarily fail due to lack of knowledge.**  
+> **They fail because they do not act on their own uncertainty.**
 
-This is the central finding of SOEA-Plus. When we measure only accuracy and confidence (Task 1), we miss the most critical failure mode in deployed AI systems: a model that correctly detects its own uncertainty but then *ignores that signal* and commits to a wrong answer anyway.
+SOEA-Plus (PDEMC) reveals a critical failure mode: models can detect their errors, yet systematically fail to regulate their behavior accordingly. We call this the **Control Collapse**.
+
+When we measure only accuracy and confidence (Task 1), we miss this most critical failure mode in deployed AI systems: a model that correctly detects its own uncertainty but then *ignores that signal* and commits to a wrong answer anyway.
 
 We term this phenomenon the **Control Collapse Hypothesis**: the systematic dissociation between a model's metacognitive awareness and its behavioral regulation. GPT-4.1-mini demonstrates this collapse dramatically — it achieves 80% accuracy and 80% monitoring accuracy, yet its Control Rationality drops to **48.3%**, barely above chance. The model *knows* it is wrong. It simply does not *act* on that knowledge.
 
@@ -56,7 +59,11 @@ The weighting reflects a deliberate theoretical stance: in high-stakes domains (
 
 A critical methodological question for any judge is: **Does Task 3 measure genuine metacognitive control, or merely prompt-following behavior?**
 
-We address this directly. SOEA-Plus explicitly separates knowledge from control by evaluating post-decisional behavior under **fixed evidence**. Between Task 2 and Task 3, no new information is provided to the model. The model's Task 3 action must therefore be driven entirely by its internal monitoring signal (Task 2 output), not by re-reading the evidence. This design ensures that performance on Task 3 reflects **metacognitive regulation** — the model's ability to translate self-assessed uncertainty into rational behavior — rather than task difficulty or evidence quality.
+We address this directly. SOEA-Plus explicitly separates knowledge from control by evaluating post-decisional behavior under **fixed evidence**. 
+
+**Importantly, no additional evidence is introduced between Task 2 and Task 3, ensuring that Task 3 behavior is driven solely by internal monitoring signals rather than re-reasoning.** 
+
+This design ensures that performance on Task 3 reflects **metacognitive regulation** — the model's ability to translate self-assessed uncertainty into rational behavior — rather than task difficulty or evidence quality.
 
 Furthermore, the Control Rationality metric is defined behaviorally:
 - A model that was **wrong** and chose `REVISE` or `ABSTAIN` is rational.
@@ -137,6 +144,8 @@ SOEA-Plus is, to our knowledge, the first biomedical benchmark to operationalize
 SOEA-Plus (PDEMC) demonstrates that the critical failure mode of current LLMs in high-stakes domains is not *ignorance* — it is *inaction*. Models can detect their own errors. They fail to govern their behavior accordingly. The Control Collapse Hypothesis provides a precise, measurable, and theoretically grounded account of this failure, and the PDEMC benchmark provides the tools to measure it at scale.
 
 For AI systems deployed in medicine, law, or any domain where a wrong committed answer is worse than an honest abstention, Control Rationality is not a nice-to-have metric. It is the metric.
+
+**In high-stakes domains, a model that abstains when uncertain is safer than one that answers confidently and incorrectly. PDEMC makes this distinction measurable.**
 
 ---
 
