@@ -52,6 +52,13 @@ The benchmark is implemented using the `kaggle-benchmarks` SDK.
 
 The PDEMC score is calculated dynamically by passing the outputs of Task 1 and Task 2 into the evaluation logic of Task 3. We evaluated three frontier models: GPT-4.1, GPT-4.1-mini, and Gemini-2.5-Flash.
 
+**PDEMC Score Formula:**
+```
+PDEMC = 0.40 × Task1_Accuracy
+      + 0.30 × Monitoring_Accuracy
+      + 0.30 × Control_Rationality
+```
+
 ### Results, insights, and conclusions
 ![Control Collapse](figures/soea_plus_control_collapse.png)
 
@@ -79,3 +86,9 @@ University of Ottawa
 [6] Machcha, S., et al. (2026). Knowing When to Abstain: Medical LLMs Under Clinical Uncertainty. *arXiv preprint arXiv:2601.12471*.
 [7] Asgari, E., et al. (2025). A framework to assess clinical safety and hallucination rates of LLMs for medical text summarisation. *npj Digital Medicine*, 8, 274.
 [8] Owayed, H. (2025). SOEA: Second-Order Error Awareness Benchmark for LLM Metacognitive Calibration in Biomedical NLI. *Kaggle Google DeepMind AGI Cognitive Benchmarks Competition*.
+
+### Code & Data Availability
+- **GitHub Repository:** https://github.com/Haifawaeedd/SOEA-Benchmark
+- **Dataset:** Available in repository (`data/SOEA_300_gold_FINAL.csv`)
+- **Evaluation Code:** Available in repository (`soea_plus/scripts/`)
+- **Visualizations:** Available in repository (`soea_plus/figures/`)
