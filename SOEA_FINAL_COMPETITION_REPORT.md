@@ -4,6 +4,7 @@
 **Deadline:** April 16, 2026
 **Benchmark:** SOEA (Second-Order Error Awareness)
 **Author:** Haifaa Owayed, University of Ottawa
+**GitHub:** https://github.com/Haifawaeedd/SOEA-Benchmark
 **Date:** March 2026
 
 ---
@@ -27,6 +28,7 @@ We evaluate two frontier models — **GPT-4.1-mini** and **Gemini 2.5 Flash** �
 | SUPPORTED | 15 (5.0%) |
 | INCONCLUSIVE | 262 (87.3%) |
 | REFUTED | 23 (7.7%) |
+| Mean Annotator Confidence | 0.884 |
 
 ---
 
@@ -50,7 +52,7 @@ We evaluate two frontier models — **GPT-4.1-mini** and **Gemini 2.5 Flash** �
 |--------|-------------|-----------------|--------|
 | **Accuracy** | 0.8000 | 0.8400 | **Gemini 2.5 Flash** |
 | **SOCE (lower=better)** | +0.1806 | -0.0121 | **Gemini 2.5 Flash** |
-| **ECE (lower=better)** | 0.3685 | 0.1268 | **Gemini 2.5 Flash** |
+| **ECE (lower=better)** | 0.4795 | 0.1268 | **Gemini 2.5 Flash** |
 | **UA Score** | -0.6625 | +0.0337 | **Gemini 2.5 Flash** |
 
 ### Confidence Analysis
@@ -77,7 +79,7 @@ We evaluate two frontier models — **GPT-4.1-mini** and **Gemini 2.5 Flash** �
 GPT-4.1-mini is significantly MORE confident when making wrong predictions (mean conf = 0.852) than when correct (mean conf = 0.671). This positive SOCE indicates a critical metacognitive failure — the model does not know when it is wrong.
 
 ### Finding 2: Gemini 2.5 Flash Shows Better Metacognition (SOCE = -0.0121)
-Gemini 2.5 Flash achieves near-zero SOCE (-0.0121), indicating more balanced confidence between correct and wrong predictions. It also achieves better ECE (0.1268 vs 0.3685), demonstrating superior calibration overall.
+Gemini 2.5 Flash achieves near-zero SOCE (-0.0121), indicating more balanced confidence between correct and wrong predictions. It also achieves better ECE (0.1268 vs 0.4795), demonstrating superior calibration overall.
 
 ### Finding 3: Both Models Struggle with Minority Classes
 Both models show poor accuracy on SUPPORTED (80.0% / 26.7%) and REFUTED (47.8% / 30.4%) labels, suggesting class imbalance challenges in biomedical claim verification.
@@ -111,3 +113,4 @@ The SOEA benchmark makes the following contributions to the field:
 
 *Haifaa Owayed — University of Ottawa — March 2026*
 *Submitted to: Kaggle Google DeepMind AGI Cognitive Benchmarks Competition*
+*GitHub: https://github.com/Haifawaeedd/SOEA-Benchmark*
