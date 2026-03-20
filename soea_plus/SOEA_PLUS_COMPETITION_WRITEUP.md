@@ -26,7 +26,7 @@ This is not a calibration problem. This is a governance problem.
 
 ![SOEA-Plus Architecture](figures/soea_plus_architecture.png)
 
-The 3-task architecture is grounded in the neuroscience of human metacognition. The human brain does not produce a single "confidence number" — it runs a continuous post-decisional monitoring loop involving two distinct neural circuits [1] [2]:
+The 3-task architecture is grounded in the neuroscience of human metacognition. The human brain does not produce a single "confidence number" — it runs a continuous post-decisional monitoring loop involving two distinct neural circuits [1] [2] [3]:
 
 | Brain Region | Function | SOEA-Plus Analog |
 |---|---|---|
@@ -124,12 +124,12 @@ The left panel places each model in one of two zones. GPT-4.1-mini falls deep in
 
 | Benchmark | Decision (Task 1) | Monitoring (Task 2) | Control (Task 3) | Missing Element |
 |---|:---:|:---:|:---:|---|
-| **MetaMedQA** | ✔️ | ❌ | ❌ | No post-decisional monitoring; no behavioral control |
-| **AutoMeco** | ✔️ | ✔️ | ❌ | No behavioral regulation; no action space |
-| **SOEA (v1)** | ✔️ | ❌ | ❌ | No monitoring task; no control task |
-| **SOEA-Plus (PDEMC)** | ✔️ | ✔️ | ✔️ | — |
+| **MetaMedQA** [4] | ✔️ | ❌ | ❌ | No post-decisional monitoring; no behavioral control |
+| **AutoMeco** [5] | ✔️ | ✔️ | ❌ | No behavioral regulation; no action space |
+| **SOEA v1** [6] | ✔️ | ❌ | ❌ | Single-task calibration only |
+| **SOEA-Plus (PDEMC)** | **✔️** | **✔️** | **✔️** | **Full metacognitive pipeline with action space** |
 
-SOEA-Plus is, to our knowledge, the first biomedical benchmark to operationalize the full **Perception → Monitoring → Control** pipeline from cognitive neuroscience into a computable, multi-task evaluation framework for LLMs. Prior work either stops at confidence calibration (MetaMedQA, SOEA v1) or measures internal signals without behavioral consequences (AutoMeco). SOEA-Plus closes this gap by requiring models to *act* on their uncertainty, not merely report it.
+SOEA-Plus is, to our knowledge, the first biomedical benchmark to operationalize the full **Perception → Monitoring → Control** pipeline from cognitive neuroscience into a computable, multi-task evaluation framework for LLMs. Prior work either stops at confidence calibration (MetaMedQA [4], SOEA v1 [6]) or measures internal signals without behavioral consequences (AutoMeco [5]). SOEA-Plus closes this gap by requiring models to *act* on their uncertainty, not merely report it.
 
 ---
 
@@ -151,8 +151,14 @@ For AI systems deployed in medicine, law, or any domain where a wrong committed 
 
 ## 11. References
 
-[1] Fleming, S. M., & Dolan, R. J. (2012). The neural basis of metacognitive ability. *Philosophical Transactions of the Royal Society B*, 367(1594), 1338–1349.
+[1] Fleming, S. M., & Dolan, R. J. (2012). The neural basis of metacognitive ability. *Philosophical Transactions of the Royal Society B: Biological Sciences*, 367(1594), 1338–1349. https://doi.org/10.1098/rstb.2011.0417
 
-[2] Yeung, N., & Summerfield, C. (2012). Metacognition in human decision-making: confidence and error monitoring. *Philosophical Transactions of the Royal Society B*, 367(1594), 1310–1321.
+[2] Yeung, N., & Summerfield, C. (2012). Metacognition in human decision-making: confidence and error monitoring. *Philosophical Transactions of the Royal Society B: Biological Sciences*, 367(1594), 1310–1321. https://doi.org/10.1098/rstb.2011.0416
 
-[3] Owayed, H. (2025). SOEA: Second-Order Error Awareness Benchmark for LLM Metacognitive Calibration in Biomedical NLI. *Kaggle Google DeepMind AGI Cognitive Benchmarks Competition*.
+[3] Qiu, L., Su, J., Ni, Y., Bai, Y., Zhang, X., Li, X., & Wan, X. (2018). The neural system of metacognition accompanying decision-making in the prefrontal cortex. *PLOS Biology*, 16(4), e2004037. https://doi.org/10.1371/journal.pbio.2004037
+
+[4] Griot, M., Hemptinne, C., Vanderdonckt, J., & Yuksel, D. (2025). Large language models lack essential metacognition for reliable medical reasoning. *Nature Communications*, 16(1), 642. https://doi.org/10.1038/s41467-024-55628-6
+
+[5] Ma, Z., et al. (2025). Large Language Models Have Intrinsic Meta-Cognition, but Need a Good Lens. *Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP)*.
+
+[6] Owayed, H. (2025). SOEA: Second-Order Error Awareness Benchmark for LLM Metacognitive Calibration in Biomedical NLI. *Kaggle Google DeepMind AGI Cognitive Benchmarks Competition*.
