@@ -21,8 +21,7 @@ The benchmark consists of three sequential tasks:
 
 Importantly, no additional evidence is introduced between Task 2 and Task 3, ensuring that Task 3 behavior is driven solely by internal monitoring signals rather than re-reasoning.
 
-**The PDEMC Composite Score:**
-We introduce the Post-Decisional Error Monitoring and Control (PDEMC) score, integrating three orthogonal dimensions:
+**The PDEMC Composite Score:** We introduce the Post-Decisional Error Monitoring and Control (PDEMC) score, integrating three orthogonal dimensions:
 - **Decision Accuracy (40%):** Task 1 correctness.
 - **Monitoring Fidelity (30%):** Task 2 error detection accuracy.
 - **Control Rationality (30%):** Task 3 action appropriateness (e.g., choosing `REVISE` or `ABSTAIN` when wrong, `COMMIT` when right).
@@ -64,30 +63,26 @@ PDEMC = 0.40 × Task1_Accuracy
 ### Results, insights, and conclusions
 ![Control Collapse](figures/soea_plus_control_collapse.png)
 
-**1. The Control Collapse (GPT-4.1-mini):** 
-The gap between Monitoring Accuracy (80.0%) and Control Rationality (48.3%) for GPT-4.1-mini is **31.7 percentage points**. This is the Control Collapse in action: the model correctly identifies its errors in Task 2 but fails to act on that knowledge in Task 3, defaulting to `SEEK_EVIDENCE` rather than `REVISE` or `ABSTAIN`. It hedges verbally but never commits to behavioral change.
+**1. The Control Collapse (GPT-4.1-mini):** The gap between Monitoring Accuracy (80.0%) and Control Rationality (48.3%) for GPT-4.1-mini is **31.7 percentage points**. This is the Control Collapse in action: the model correctly identifies its errors in Task 2 but fails to act on that knowledge in Task 3, defaulting to `SEEK_EVIDENCE` rather than `REVISE` or `ABSTAIN`. It hedges verbally but never commits to behavioral change.
 
-**2. Gemini's Superior Governance:** 
-Gemini-2.5-Flash is the only model that actively `REVISE`s its answers (9% of cases) and achieves the highest Control Rationality (74.7%). Its Correction Rate when choosing `REVISE` is **65.4%** — meaning that when Gemini decides to revise, it succeeds in correcting its error nearly two-thirds of the time.
+**2. Gemini's Superior Governance:** Gemini-2.5-Flash is the only model that actively `REVISE`s its answers (9% of cases) and achieves the highest Control Rationality (74.7%). Its Correction Rate when choosing `REVISE` is **65.4%** — meaning that when Gemini decides to revise, it succeeds in correcting its error nearly two-thirds of the time.
 
-**3. The SOCE Danger Signal:** 
-Both GPT models exhibit positive Second-Order Calibration Error (SOCE) (+0.176 to +0.181), meaning they are paradoxically *more confident when they are wrong*. Gemini-2.5-Flash achieves near-zero SOCE (-0.012), indicating a far safer failure mode.
+**3. The SOCE Danger Signal:** Both GPT models exhibit positive Second-Order Calibration Error (SOCE) (+0.176 to +0.181), meaning they are paradoxically *more confident when they are wrong*. Gemini-2.5-Flash achieves near-zero SOCE (-0.012), indicating a far safer failure mode.
 
-**Conclusion:**
-SOEA-Plus demonstrates that the critical failure mode of current LLMs in high-stakes domains is *inaction*. Models can detect their own errors, but they fail to govern their behavior accordingly. The Control Collapse Hypothesis provides a precise, measurable account of this failure. PDEMC makes this distinction measurable, proving that a model that abstains when uncertain is safer than one that answers confidently and incorrectly. This shifts evaluation from "Can the model answer correctly?" to "Can the model act safely when it might be wrong?"
+**Conclusion:** SOEA-Plus demonstrates that the critical failure mode of current LLMs in high-stakes domains is *inaction*. Models can detect their own errors, but they fail to govern their behavior accordingly. The Control Collapse Hypothesis provides a precise, measurable account of this failure. PDEMC makes this distinction measurable, proving that a model that abstains when uncertain is safer than one that answers confidently and incorrectly. This shifts evaluation from "Can the model answer correctly?" to "Can the model act safely when it might be wrong?"
 
 ### Organizational affiliations
 University of Ottawa
 
 ### References & citations
-[1] Fleming, S. M. (2024). Metacognition and confidence: A review and synthesis. *Annual Review of Psychology*, 75, 241-268. https://doi.org/10.1146/annurev-psych-022423-032425
-[2] Kapoor, S., Gruver, N., Roberts, M., et al. (2024). Large language models must be taught to know what they don't know. *Advances in Neural Information Processing Systems (NeurIPS)*, 37.
-[3] Qiu, L., Su, J., Ni, Y., Bai, Y., Zhang, X., Li, X., & Wan, X. (2018). The neural system of metacognition accompanying decision-making in the prefrontal cortex. *PLOS Biology*, 16(4), e2004037. https://doi.org/10.1371/journal.pbio.2004037
-[4] Griot, M., Hemptinne, C., Vanderdonckt, J., & Yuksel, D. (2025). Large language models lack essential metacognition for reliable medical reasoning. *Nature Communications*, 16(1), 642. https://doi.org/10.1038/s41467-024-55628-6
-[5] Ma, Z., Yuan, Q., Wang, Z., & Zhou, D. (2025). Large Language Models Have Intrinsic Meta-Cognition, but Need a Good Lens. *Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing*, 3460–3477. https://doi.org/10.18653/v1/2025.emnlp-main.171
-[6] Machcha, S., Yerra, S., Gupta, S., Sahoo, A., Sultana, S., Yu, H., & Yao, Z. (2026). Knowing When to Abstain: Medical LLMs Under Clinical Uncertainty. *arXiv preprint arXiv:2601.12471*. https://arxiv.org/abs/2601.12471
-[7] Asgari, E., et al. (2025). A framework to assess clinical safety and hallucination rates of LLMs for medical text summarisation. *npj Digital Medicine*, 8, 274. https://doi.org/10.1038/s41746-025-01670-7
-[8] Owayed, H. (2025). SOEA: Second-Order Error Awareness Benchmark for LLM Metacognitive Calibration in Biomedical NLI. *Prior Kaggle competition benchmark / submission*.
+1. Fleming, S. M. (2024). Metacognition and confidence: A review and synthesis. *Annual Review of Psychology*, 75, 241-268. https://doi.org/10.1146/annurev-psych-022423-032425
+2. Kapoor, S., Gruver, N., Roberts, M., et al. (2024). Large language models must be taught to know what they don't know. *Advances in Neural Information Processing Systems (NeurIPS)*, 37.
+3. Qiu, L., Su, J., Ni, Y., Bai, Y., Zhang, X., Li, X., & Wan, X. (2018). The neural system of metacognition accompanying decision-making in the prefrontal cortex. *PLOS Biology*, 16(4), e2004037. https://doi.org/10.1371/journal.pbio.2004037
+4. Griot, M., Hemptinne, C., Vanderdonckt, J., & Yuksel, D. (2025). Large language models lack essential metacognition for reliable medical reasoning. *Nature Communications*, 16(1), 642. https://doi.org/10.1038/s41467-024-55628-6
+5. Ma, Z., Yuan, Q., Wang, Z., & Zhou, D. (2025). Large Language Models Have Intrinsic Meta-Cognition, but Need a Good Lens. *Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing*, 3460–3477. https://doi.org/10.18653/v1/2025.emnlp-main.171
+6. Machcha, S., Yerra, S., Gupta, S., Sahoo, A., Sultana, S., Yu, H., & Yao, Z. (2026). Knowing When to Abstain: Medical LLMs Under Clinical Uncertainty. *arXiv preprint arXiv:2601.12471*. https://arxiv.org/abs/2601.12471
+7. Asgari, E., et al. (2025). A framework to assess clinical safety and hallucination rates of LLMs for medical text summarisation. *npj Digital Medicine*, 8, 274. https://doi.org/10.1038/s41746-025-01670-7
+8. Owayed, H. (2025). SOEA: Second-Order Error Awareness Benchmark for LLM Metacognitive Calibration in Biomedical NLI. *Prior Kaggle competition benchmark / submission*.
 
 ### Code & Data Availability
 - **GitHub Repository:** https://github.com/Haifawaeedd/SOEA-Benchmark
