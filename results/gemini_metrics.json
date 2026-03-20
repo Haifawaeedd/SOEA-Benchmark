@@ -1,0 +1,15 @@
+{
+  "model": "Gemini 2.5 Flash",
+  "n_examples": 300,
+  "accuracy": 0.84,
+  "SOCE": -0.0121,
+  "ECE": 0.1268,
+  "mean_conf_correct": 0.8454,
+  "mean_conf_wrong": 0.8333,
+  "uncertainty_awareness": 0.0337,
+  "per_label_accuracy": {
+    "SUPPORTED": 0.2667,
+    "INCONCLUSIVE": 0.9198,
+    "REFUTED": 0.3043
+  }
+}
