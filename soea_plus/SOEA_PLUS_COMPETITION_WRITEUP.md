@@ -37,9 +37,9 @@ This architecture explicitly separates three cognitively distinct processes that
 2. **Task 2 (Monitoring):** Can the model detect its own errors post-hoc? *(Awareness)*
 3. **Task 3 (Control):** Does the model use that awareness to regulate behavior? *(Governance)*
 
-### Why This Weighting?
+### The PDEMC Composite Score: Theoretical Grounding
 
-The PDEMC Composite Score weights these tasks as follows:
+The PDEMC Composite Score is not a simple average. It integrates three orthogonal cognitive dimensions—decision accuracy, monitoring fidelity, and control rationality—reflecting a sequential metacognitive pipeline rather than a single-point estimate.
 
 ```
 PDEMC = 0.20 × Task1_Accuracy
@@ -66,7 +66,28 @@ This behavioral grounding makes the metric robust to prompt artifacts.
 
 ---
 
-## 4. Results: The Control Collapse in Numbers
+## 4. Dataset: Embracing Real-World Ambiguity
+
+Unlike synthetic benchmarks, SOEA-Plus uses 100% real-world data extracted directly from the PubMed/Entrez API. The dataset consists of 300 meticulously curated claim-evidence pairs from recent medical literature (2020-2025).
+
+The dataset features high-quality Gold Standard labels created through rigorous human review. The distribution reflects the natural ambiguity of medical literature:
+- **INCONCLUSIVE:** 87.3%
+- **REFUTED:** 7.7%
+- **SUPPORTED:** 5.0%
+
+**Why this distribution?** We intentionally retain the real-world distribution of scientific uncertainty to stress-test metacognitive control under ambiguity, rather than artificially simplifying the task. In clinical reality, most single abstracts do not definitively prove or refute complex medical claims. By preserving this natural imbalance, we prevent models from gaming the benchmark through simple pattern matching and force them to grapple with genuine scientific ambiguity.
+
+---
+
+## 5. Visual Proof: The Control Collapse
+
+![Control Collapse Hypothesis](figures/soea_plus_control_collapse.png)
+
+The left panel places each model in one of two zones. GPT-4.1-mini falls deep in the **Control Collapse Zone** — its monitoring accuracy (hollow marker, 80%) sits far above its control rationality (filled marker, 48.3%), producing a gap of **+31.7 percentage points**. GPT-4.1 and Gemini-2.5-Flash remain in or near the Balanced Zone, with gaps of +11.0% and +5.0% respectively. The right panel quantifies these gaps directly, making the collapse magnitude immediately legible to any reader.
+
+---
+
+## 6. Results: The Control Collapse in Numbers
 
 ![SOEA-Plus Dashboard](figures/soea_plus_dashboard.png)
 
@@ -86,38 +107,32 @@ This behavioral grounding makes the metric robust to prompt artifacts.
 
 ---
 
-## 5. Visual Proof: The Control Collapse
-
-![Control Collapse Hypothesis](figures/soea_plus_control_collapse.png)
-
-The left panel places each model in one of two zones. GPT-4.1-mini falls deep in the **Control Collapse Zone** — its monitoring accuracy (hollow marker, 80%) sits far above its control rationality (filled marker, 48.3%), producing a gap of **+31.7 percentage points**. GPT-4.1 and Gemini-2.5-Flash remain in or near the Balanced Zone, with gaps of +11.0% and +5.0% respectively. The right panel quantifies these gaps directly, making the collapse magnitude immediately legible to any reader.
-
-## 6. Multi-Dimensional Performance
+## 7. Multi-Dimensional Performance
 
 ![Radar Chart](figures/soea_plus_radar.png)
 
 ---
 
-## 7. Comparison with Prior Work
+## 8. Comparison with Prior Work
 
-| Benchmark | Measures | Missing |
-|---|---|---|
-| **MetaMedQA** | Accuracy + Confidence | No post-decisional monitoring; no behavioral control |
-| **AutoMeco** | Internal uncertainty signals | No behavioral regulation; no action space |
-| **SOEA (v1)** | Accuracy + SOCE + ECE | No monitoring task; no control task |
-| **SOEA-Plus (PDEMC)** | Decision + Monitoring + Control + PDEMC Score | — |
+| Benchmark | Decision (Task 1) | Monitoring (Task 2) | Control (Task 3) | Missing Element |
+|---|:---:|:---:|:---:|---|
+| **MetaMedQA** | ✔️ | ❌ | ❌ | No post-decisional monitoring; no behavioral control |
+| **AutoMeco** | ✔️ | ✔️ | ❌ | No behavioral regulation; no action space |
+| **SOEA (v1)** | ✔️ | ❌ | ❌ | No monitoring task; no control task |
+| **SOEA-Plus (PDEMC)** | ✔️ | ✔️ | ✔️ | — |
 
 SOEA-Plus is, to our knowledge, the first biomedical benchmark to operationalize the full **Perception → Monitoring → Control** pipeline from cognitive neuroscience into a computable, multi-task evaluation framework for LLMs. Prior work either stops at confidence calibration (MetaMedQA, SOEA v1) or measures internal signals without behavioral consequences (AutoMeco). SOEA-Plus closes this gap by requiring models to *act* on their uncertainty, not merely report it.
 
 ---
 
-## 8. Monitoring Analysis
+## 9. Monitoring Analysis
 
 ![Monitoring Confusion Matrices](figures/soea_plus_monitoring.png)
 
 ---
 
-## 9. Conclusion
+## 10. Conclusion
 
 SOEA-Plus (PDEMC) demonstrates that the critical failure mode of current LLMs in high-stakes domains is not *ignorance* — it is *inaction*. Models can detect their own errors. They fail to govern their behavior accordingly. The Control Collapse Hypothesis provides a precise, measurable, and theoretically grounded account of this failure, and the PDEMC benchmark provides the tools to measure it at scale.
 
@@ -125,7 +140,7 @@ For AI systems deployed in medicine, law, or any domain where a wrong committed 
 
 ---
 
-## 10. References
+## 11. References
 
 [1] Fleming, S. M., & Dolan, R. J. (2012). The neural basis of metacognitive ability. *Philosophical Transactions of the Royal Society B*, 367(1594), 1338–1349.
 
