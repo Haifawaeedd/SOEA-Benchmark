@@ -9,7 +9,7 @@ Modern LLMs do not primarily fail due to lack of knowledge. They fail because th
 
 Current benchmarks test what models know (crystallized knowledge) or their confidence calibration (MetaMedQA [4], SOEA v1 [8]). However, they fail to measure whether models can translate internal uncertainty into behavioral regulation. SOEA-Plus (PDEMC) reveals a critical failure mode: models can detect their errors, yet systematically fail to regulate their behavior accordingly. We call this the **Control Collapse**.
 
-This benchmark targets the **Metacognition** track. It isolates the cognitive faculty of metacognitive regulation by separating knowledge retrieval from behavioral control. It answers the question: *When a model knows it might be wrong, does it have the cognitive control to change its behavior?*
+This benchmark targets the **Metacognition** track. It isolates the cognitive faculty of metacognitive regulation by separating knowledge retrieval from behavioral control. It answers the question: *When a model knows it might be wrong, does it have the cognitive control to change its behavior?* SOEA-Plus evaluates not only whether a model can express uncertainty, but whether it can convert uncertainty into safe behavior.
 
 ### Task & benchmark construction
 SOEA-Plus operationalizes the **Perception → Monitoring → Control** pipeline from cognitive neuroscience [3] into a computable, multi-task evaluation framework using the `kaggle-benchmarks` SDK.
