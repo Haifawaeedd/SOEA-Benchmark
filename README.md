@@ -1,4 +1,4 @@
-# SOEA-Benchmark — Second-Order Error Awareness + PDEMC
+# SOEA-Plus (PDEMC) — Post-Decisional Error Monitoring and Control Benchmark
 
 > **Kaggle Competition:** [Google DeepMind AGI Cognitive Benchmarks](https://www.kaggle.com/competitions/agi-cognitive-benchmarks) | Prize: $20,000 | Deadline: April 16, 2026
 
@@ -9,12 +9,22 @@
 
 ---
 
-## ⭐ NEW: SOEA-Plus (PDEMC) — Winner-Level Upgrade
+## 🚀 Start Here
+
+If you are reviewing this project for the Kaggle competition, please start with these key links:
+
+- 🏆 **[Kaggle Benchmark Submission](https://www.kaggle.com/competitions/kaggle-measuring-agi/writeups)** *(Replace with your actual Kaggle writeup link once submitted)*
+- 📄 **[Full Competition Writeup (Markdown)](soea_plus/SOEA_PLUS_COMPETITION_WRITEUP.md)**
+- 📊 **[SOEA-Plus Code & Results Directory](soea_plus/)**
+
+---
+
+## ⭐ SOEA-Plus (PDEMC) — The Control Collapse Hypothesis
 
 > **"Models do not fail at knowing — they fail at acting on uncertainty."**  
 > — *The Control Collapse Hypothesis*
 
-SOEA has been upgraded to **SOEA-Plus (Post-Decisional Error Monitoring and Control)** — a full 3-task cognitive benchmark grounded in neuroscience. See the [`soea_plus/`](soea_plus/) directory for the complete implementation.
+SOEA-Plus is a full 3-task cognitive benchmark grounded in neuroscience that evaluates whether large language models can not only detect uncertainty but also regulate their behavior accordingly. 
 
 ### Control Collapse: Visual Proof
 
@@ -26,19 +36,21 @@ SOEA has been upgraded to **SOEA-Plus (Post-Decisional Error Monitoring and Cont
 | **Gemini-2.5-Flash** | **84.0%** | 79.7% | **74.7%** | 0.7957 |
 | **GPT-4.1-mini** | 80.0% | 80.0% | 48.3% | 0.7050 |
 
-📄 **[Read the full competition writeup →](soea_plus/SOEA_PLUS_COMPETITION_WRITEUP.md)**
+The results reveal a striking dissociation: GPT-4.1-mini achieves 80% decision accuracy yet only 48.3% control rationality — a **+31.7% Control Collapse Gap** — confirming that metacognitive awareness does not automatically translate into safe behavior.
+
+📄 **[Read the full competition writeup for detailed methodology and analysis →](soea_plus/SOEA_PLUS_COMPETITION_WRITEUP.md)**
 
 ---
 
-## SOEA v1 — Overview
+## 🏛️ Legacy Version: SOEA v1 (Original)
+
+*Note: The following section describes the original 2-task SOEA benchmark. The primary submission for the competition is the upgraded SOEA-Plus (PDEMC) described above.*
 
 **SOEA (Second-Order Error Awareness)** is a task-specific benchmark for evaluating second-order error awareness in large language models (LLMs) — measuring whether models *know when they are wrong*, a critical metacognitive capability for safe AI deployment in biomedical domains.
 
 Unlike traditional benchmarks that measure first-order accuracy, SOEA focuses on **metacognitive calibration**: how well a model's confidence aligns with its actual correctness.
 
----
-
-## The SOCE Metric
+### The SOCE Metric
 
 ```
 SOCE = Mean confidence when WRONG − Mean confidence when CORRECT
@@ -54,9 +66,7 @@ Unlike ECE, which measures aggregate calibration error, **SOCE isolates second-o
 | −0.05 < SOCE < +0.05 | Near-random metacognitive calibration |
 | SOCE < −0.05 | Model appropriately uncertain when wrong — **good metacognition** |
 
----
-
-## Results
+### Legacy Results
 
 | Model | Accuracy | SOCE | ECE | UA Score |
 |-------|----------|------|-----|----------|
@@ -64,37 +74,10 @@ Unlike ECE, which measures aggregate calibration error, **SOCE isolates second-o
 | GPT-4.1 | 0.8300 | +0.1762 ⚠️ | 0.3409 | — |
 | Gemini 2.5 Flash | **0.8400** | **−0.0121** ✅ | **0.1268** | **+0.0337** |
 
-### 3-Model Comparison Dashboard
+#### 3-Model Comparison Dashboard
 ![3-Model Comparison](results/3model_comparison.png)
 
----
-
-## 🔥 Core Insight
-
-GPT-4.1-mini is significantly more confident when wrong (0.852) than when correct (0.671), demonstrating a **critical metacognitive failure**.
-
-This indicates that the model systematically misjudges its own reliability — a high-risk behavior in real-world deployment.
-
-Both GPT models (mini and 4.1) show SOCE > +0.17, confirming a **consistent pattern of metacognitive overconfidence** in the OpenAI model family.
-
-Gemini 2.5 Flash shows near-zero SOCE (−0.0121), suggesting significantly better metacognitive calibration.
-
----
-
-## Why This Matters
-
-Metacognitive failure — especially overconfidence in incorrect predictions — is a critical risk in high-stakes domains such as healthcare.
-
-> A model that is wrong is expected.  
-> A model that is wrong **and confident** is dangerous.
-
-This failure is particularly dangerous in biomedical contexts, where overconfident incorrect predictions can lead to unsafe or misleading clinical decisions.
-
-SOEA directly measures this failure mode, providing a principled evaluation framework for AI safety in biomedical NLI.
-
----
-
-## Dataset
+### Dataset
 
 - **300 real PubMed claim-evidence pairs** sourced via NCBI E-utilities API
 - **Gold-standard human annotation** by domain expert **Haifaa Owayed** (University of Ottawa)
@@ -108,9 +91,7 @@ SOEA directly measures this failure mode, providing a principled evaluation fram
 
 The high proportion of INCONCLUSIVE cases reflects real-world scientific uncertainty in biomedical literature, where many studies provide limited, indirect, or preliminary evidence.
 
----
-
-## Decision Rules
+### Decision Rules
 
 | Label | Criteria |
 |-------|----------|
@@ -124,23 +105,16 @@ The high proportion of INCONCLUSIVE cases reflects real-world scientific uncerta
 
 ```
 SOEA-Benchmark/
+├── soea_plus/                           # 🌟 NEW: SOEA-Plus (PDEMC) Benchmark
+│   ├── SOEA_PLUS_COMPETITION_WRITEUP.md # Full competition report
+│   ├── scripts/                         # 3-task evaluation scripts
+│   ├── results/                         # Results for 3 frontier models
+│   └── figures/                         # Visualizations and diagrams
 ├── data/
 │   └── SOEA_300_gold_FINAL.csv          # Gold-standard annotated dataset
-├── results/
-│   ├── SOEA_300_eval_results.csv        # GPT-4.1-mini predictions + SOCE
-│   ├── SOEA_gpt41_eval.csv              # GPT-4.1 predictions + SOCE
-│   ├── SOEA_gemini_eval.csv             # Gemini 2.5 Flash predictions + SOCE
-│   ├── soce_metrics.json                # GPT-4.1-mini metrics
-│   ├── gpt41_metrics.json               # GPT-4.1 metrics
-│   ├── gemini_metrics.json              # Gemini 2.5 Flash metrics
-│   ├── 3model_comparison.png            # 3-model comparison dashboard
-│   └── multi_model_comparison.png       # GPT vs Gemini comparison
-├── scripts/
-│   ├── collect_pubmed.py                # PubMed data collection
-│   ├── gold_annotation.py               # Gold standard annotation pipeline
-│   ├── soce_evaluation_gpt.py           # GPT-4.1-mini SOCE evaluation
-│   └── soce_evaluation_gemini.py        # Gemini 2.5 Flash SOCE evaluation
-├── SOEA_FINAL_COMPETITION_REPORT.md     # Full competition report
+├── results/                             # Legacy SOEA v1 results
+├── scripts/                             # Legacy SOEA v1 scripts
+├── SOEA_FINAL_COMPETITION_REPORT.md     # Legacy SOEA v1 report
 └── README.md
 ```
 
@@ -156,8 +130,9 @@ cd SOEA-Benchmark
 # Install dependencies
 pip install openai pandas numpy matplotlib
 
-# Run evaluation on your own model
-python scripts/soce_evaluation_gpt.py
+# Run SOEA-Plus evaluation
+cd soea_plus/scripts
+python 01_run_soea_plus_gpt.py
 ```
 
 ---
@@ -165,8 +140,8 @@ python scripts/soce_evaluation_gpt.py
 ## Citation
 
 ```bibtex
-@misc{owayed2026soea,
-  title       = {SOEA: A Benchmark for Second-Order Error Awareness in Biomedical NLI},
+@misc{owayed2026soeaplus,
+  title       = {SOEA-Plus (PDEMC): A Benchmark for Post-Decisional Error Monitoring and Control in Biomedical LLMs},
   author      = {Owayed, Haifaa},
   year        = {2026},
   institution = {University of Ottawa},
