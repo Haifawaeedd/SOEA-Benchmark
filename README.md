@@ -13,7 +13,7 @@
 
 If you are reviewing this project for the Kaggle competition, please start with these key links:
 
-- 🏆 **[Kaggle Benchmark Submission](https://www.kaggle.com/competitions/kaggle-measuring-agi/writeups)** *(Replace with your actual Kaggle writeup link once submitted)*
+- 🏆 **[Kaggle Benchmark Submission](https://www.kaggle.com/competitions/kaggle-measuring-agi/writeups/new-writeup-1774044382921)**
 - 📄 **[Full Competition Writeup (Markdown)](soea_plus/SOEA_PLUS_COMPETITION_WRITEUP.md)**
 - 📊 **[SOEA-Plus Code & Results Directory](soea_plus/)**
 
