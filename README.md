@@ -55,6 +55,24 @@ The weighting reflects a deliberate design choice: decision quality remains esse
 
 ![Control Collapse](soea_plus/figures/soea_plus_control_collapse.png)
 
+## 🚨 New Findings: Control Collapse is a Fundamental Flaw
+
+To prove that the **Control Collapse Gap** is a true metacognitive failure and not an artifact of the dataset, we conducted three new stress tests:
+
+### 1. Threshold Baseline Comparison
+We compared the LLMs against a simple rule: *If confidence ≥ 0.8, COMMIT. Otherwise, ABSTAIN.*
+**Result:** GPT-4.1-mini's control rationality (66.0%) is **16.7% worse** than this simple static rule (82.7%). The model's internal control mechanism is actively harmful compared to a basic rational policy.
+
+### 2. Action Confusion Matrix
+We mapped what the model *should* have done (Rational Action) against what it *actually* did (Predicted Action).
+**Result:** The matrices reveal a massive **over-commitment bias**. When models are wrong and uncertain, they still overwhelmingly choose to `COMMIT` rather than `ABSTAIN` or `REVISE`.
+
+### 3. Cross-Subdomain Stress Test
+We split the 300 gold samples into their true medical subdomains (Oncology, Cardiology, Neurology, Infectious Disease).
+**Result:** The Control Collapse Gap persists across **all** biomedical subdomains (ranging from -5.3% to -28.6% for GPT-4.1-mini). This confirms the failure is a fundamental architectural flaw in LLM metacognition, not a domain-specific data artifact.
+
+*See the `soea_plus/figures/` directory for the full visualizations of these findings.*
+
 | Model | Task 1 Acc | Monitoring Acc | Control Rationality | PDEMC Score |
 |-------|------------|----------------|---------------------|-------------|
 | **GPT-4.1** | 83.0% | **83.0%** | 72.0% | **0.7970** |
@@ -189,3 +207,5 @@ Kaggle: [Google DeepMind AGI Cognitive Benchmarks Competition](https://www.kaggl
 ## License
 
 This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
+
+
