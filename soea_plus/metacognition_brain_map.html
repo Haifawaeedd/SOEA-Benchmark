@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOEA-Plus: Metacognition Brain Map — How LLMs Think About Thinking</title>
+<style>
+  :root {
+    --bg: #0a0a1a;
+    --panel: #0f1128;
+    --border: #1e2a4a;
+    --accent1: #4fc3f7;   /* decision blue */
+    --accent2: #81c784;   /* monitoring green */
+    --accent3: #ffb74d;   /* control orange */
+    --collapse: #ef5350;  /* collapse red */
+    --human: #ce93d8;     /* human purple */
+    --text: #e8eaf6;
+    --text2: #90a4ae;
+    --glow1: rgba(79,195,247,0.3);
+    --glow2: rgba(129,199,132,0.3);
+    --glow3: rgba(255,183,77,0.3);
+    --glowR: rgba(239,83,80,0.4);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 28px 20px 16px;
+    background: linear-gradient(180deg, #060614 0%, transparent 100%);
+  }
+  header h1 {
+    font-size: clamp(1.3rem, 3vw, 2rem);
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: 0.5px;
+  }
+  header p {
+    color: var(--text2); font-size: 0.9rem; margin-top: 6px;
+  }
+
+  /* ── LANG TOGGLE ── */
+  .lang-toggle {
+    position: fixed; top: 16px; right: 20px; z-index: 1000;
+    display: flex; gap: 6px;
+  }
+  .lang-btn {
+    background: var(--panel); border: 1px solid var(--border);
+    color: var(--text2); padding: 5px 14px; border-radius: 20px;
+    cursor: pointer; font-size: 0.8rem; transition: all 0.2s;
+  }
+  .lang-btn.active { background: var(--accent1); color: #000; border-color: var(--accent1); font-weight: 700; }
+
+  /* ── MAIN LAYOUT ── */
+  .main-container {
+    display: grid;
+    grid-template-columns: 260px 1fr 260px;
+    gap: 16px;
+    padding: 0 20px 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  @media (max-width: 1000px) {
+    .main-container { grid-template-columns: 1fr; }
+  }
+
+  /* ── SIDE PANELS ── */
+  .side-panel {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .info-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .info-card.stage-1 { border-left: 3px solid var(--accent1); }
+  .info-card.stage-2 { border-left: 3px solid var(--accent2); }
+  .info-card.stage-3 { border-left: 3px solid var(--accent3); }
+  .info-card.collapse { border-left: 3px solid var(--collapse); }
+  .info-card.human-card { border-left: 3px solid var(--human); }
+  .info-card h3 { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+  .info-card.stage-1 h3 { color: var(--accent1); }
+  .info-card.stage-2 h3 { color: var(--accent2); }
+  .info-card.stage-3 h3 { color: var(--accent3); }
+  .info-card.collapse h3 { color: var(--collapse); }
+  .info-card.human-card h3 { color: var(--human); }
+  .info-card p { font-size: 0.78rem; color: var(--text2); line-height: 1.5; }
+
+  /* metric rows */
+  .metric-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 5px 0; border-bottom: 1px solid var(--border);
+    font-size: 0.78rem;
+  }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-label { color: var(--text2); }
+  .metric-val { font-weight: 700; }
+  .c1 { color: var(--accent1); }
+  .c2 { color: var(--accent2); }
+  .c3 { color: var(--accent3); }
+  .cr { color: var(--collapse); }
+  .ch { color: var(--human); }
+
+  /* ── BRAIN CANVAS AREA ── */
+  .brain-area {
+    position: relative;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 12px;
+  }
+  #brainCanvas {
+    width: 100%; max-width: 680px;
+    border-radius: 16px;
+    cursor: crosshair;
+    display: block;
+  }
+
+  /* ── MODEL SELECTOR ── */
+  .model-selector {
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  }
+  .model-btn {
+    background: var(--panel); border: 1px solid var(--border);
+    color: var(--text2); padding: 7px 18px; border-radius: 20px;
+    cursor: pointer; font-size: 0.82rem; transition: all 0.25s;
+    font-weight: 500;
+  }
+  .model-btn:hover { border-color: var(--accent1); color: var(--text); }
+  .model-btn.active { color: #000; font-weight: 700; }
+  .model-btn.m0.active { background: var(--accent1); border-color: var(--accent1); }
+  .model-btn.m1.active { background: var(--accent2); border-color: var(--accent2); }
+  .model-btn.m2.active { background: var(--accent3); border-color: var(--accent3); }
+  .model-btn.m3.active { background: var(--collapse); border-color: var(--collapse); }
+  .model-btn.m4.active { background: var(--human); border-color: var(--human); }
+
+  /* ── TOOLTIP ── */
+  #tooltip {
+    position: fixed; pointer-events: none;
+    background: rgba(15,17,40,0.97); border: 1px solid var(--accent1);
+    border-radius: 10px; padding: 10px 14px;
+    font-size: 0.8rem; max-width: 240px; z-index: 999;
+    display: none; line-height: 1.6;
+    box-shadow: 0 4px 20px rgba(79,195,247,0.2);
+  }
+  #tooltip strong { color: var(--accent1); display: block; margin-bottom: 4px; }
+
+  /* ── FLOW SIGNAL ── */
+  .flow-bar {
+    width: 100%; max-width: 680px;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px;
+  }
+  .flow-bar h4 { font-size: 0.8rem; color: var(--text2); margin-bottom: 10px; }
+  .flow-steps {
+    display: flex; align-items: center; gap: 0;
+    justify-content: space-between;
+  }
+  .flow-step {
+    flex: 1; text-align: center;
+    padding: 8px 4px; border-radius: 8px;
+    font-size: 0.75rem; font-weight: 600;
+    transition: all 0.4s; opacity: 0.4;
+    cursor: pointer;
+  }
+  .flow-step.active { opacity: 1; transform: scale(1.05); }
+  .flow-step.fs1 { background: rgba(79,195,247,0.15); color: var(--accent1); }
+  .flow-step.fs2 { background: rgba(129,199,132,0.15); color: var(--accent2); }
+  .flow-step.fs3 { background: rgba(255,183,77,0.15); color: var(--accent3); }
+  .flow-step.fs3.collapse-state { background: rgba(239,83,80,0.2); color: var(--collapse); }
+  .flow-arrow { color: var(--text2); font-size: 1.1rem; flex: 0; padding: 0 4px; }
+
+  /* ── COLLAPSE METER ── */
+  .collapse-meter {
+    width: 100%; max-width: 680px;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px;
+  }
+  .collapse-meter h4 { font-size: 0.8rem; color: var(--text2); margin-bottom: 8px; }
+  .meter-track {
+    height: 10px; background: rgba(255,255,255,0.08);
+    border-radius: 5px; overflow: hidden; position: relative;
+  }
+  .meter-fill {
+    height: 100%; border-radius: 5px;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1), background 0.5s;
+  }
+  .meter-labels {
+    display: flex; justify-content: space-between;
+    font-size: 0.7rem; color: var(--text2); margin-top: 4px;
+  }
+  .meter-val {
+    text-align: center; font-size: 1.1rem; font-weight: 700;
+    margin-top: 4px; transition: color 0.5s;
+  }
+
+  /* ── BOTTOM TABLE ── */
+  .results-table-wrap {
+    max-width: 1360px; margin: 0 auto 30px;
+    padding: 0 20px;
+  }
+  .results-table-wrap h3 {
+    font-size: 0.95rem; color: var(--text2); margin-bottom: 10px;
+    text-align: center;
+  }
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  th {
+    background: var(--panel); color: var(--text2);
+    padding: 8px 12px; text-align: center;
+    border-bottom: 2px solid var(--border);
+    font-weight: 600; font-size: 0.78rem;
+  }
+  td {
+    padding: 8px 12px; text-align: center;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  tr:hover td { background: rgba(255,255,255,0.03); }
+  .bar-cell { min-width: 120px; }
+  .mini-bar {
+    height: 6px; border-radius: 3px;
+    display: inline-block; vertical-align: middle;
+    margin-right: 6px; transition: width 0.6s;
+  }
+
+  /* ── PULSE ANIMATION ── */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  @keyframes flow-pulse {
+    0% { box-shadow: 0 0 0 0 var(--glow1); }
+    70% { box-shadow: 0 0 0 8px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+  .pulsing { animation: pulse 2s ease-in-out infinite; }
+
+  /* ── ARABIC RTL ── */
+  body.rtl { direction: rtl; }
+  body.rtl .info-card.stage-1 { border-left: none; border-right: 3px solid var(--accent1); }
+  body.rtl .info-card.stage-2 { border-left: none; border-right: 3px solid var(--accent2); }
+  body.rtl .info-card.stage-3 { border-left: none; border-right: 3px solid var(--accent3); }
+  body.rtl .info-card.collapse { border-left: none; border-right: 3px solid var(--collapse); }
+  body.rtl .info-card.human-card { border-left: none; border-right: 3px solid var(--human); }
+</style>
+</head>
+<body>
+
+<!-- Lang Toggle -->
+<div class="lang-toggle">
+  <button class="lang-btn active" id="btnEN" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" id="btnAR" onclick="setLang('ar')">AR</button>
+</div>
+
+<!-- Header -->
+<header>
+  <h1 id="h-title">SOEA-Plus: Metacognition Brain Map</h1>
+  <p id="h-sub">How does an LLM think about its own thinking? — Interactive Neural Pathway Visualization</p>
+</header>
+
+<!-- Model Selector -->
+<div style="display:flex;justify-content:center;padding:0 20px 14px;gap:8px;flex-wrap:wrap;">
+  <span style="color:var(--text2);font-size:0.82rem;align-self:center;" id="lbl-select">Select Model:</span>
+  <button class="model-btn m0 active" onclick="selectModel(0)">GPT-4.1</button>
+  <button class="model-btn m1" onclick="selectModel(1)">Gemini-2.5-Flash</button>
+  <button class="model-btn m2" onclick="selectModel(2)">GPT-4.1-mini</button>
+  <button class="model-btn m3" onclick="selectModel(3)">Llama-4-Scout</button>
+  <button class="model-btn m4" onclick="selectModel(4)" id="lbl-human">Human Baseline</button>
+</div>
+
+<!-- Main Grid -->
+<div class="main-container">
+
+  <!-- LEFT PANEL -->
+  <div class="side-panel">
+    <div class="info-card stage-1">
+      <h3 id="s1-title">🧠 Stage 1 — Decision</h3>
+      <p id="s1-desc">The model reads the claim and evidence, then classifies: SUPPORTED / REFUTED / INCONCLUSIVE. This is first-order cognition — knowing the answer.</p>
+      <div style="margin-top:10px;">
+        <div class="metric-row"><span class="metric-label" id="lbl-acc">Accuracy</span><span class="metric-val c1" id="val-acc">83.0%</span></div>
+        <div class="metric-row"><span class="metric-label" id="lbl-conf">Avg Confidence</span><span class="metric-val c1" id="val-conf">0.74</span></div>
+      </div>
+    </div>
+
+    <div class="info-card stage-2">
+      <h3 id="s2-title">🔍 Stage 2 — Monitoring</h3>
+      <p id="s2-desc">The model estimates: "How likely am I wrong?" This is second-order cognition — knowing about knowing. SOCE measures directional miscalibration.</p>
+      <div style="margin-top:10px;">
+        <div class="metric-row"><span class="metric-label" id="lbl-mon">Monitoring Acc</span><span class="metric-val c2" id="val-mon">83.0%</span></div>
+        <div class="metric-row"><span class="metric-label">SOCE</span><span class="metric-val c2" id="val-soce">+0.176</span></div>
+      </div>
+    </div>
+
+    <div class="info-card stage-3">
+      <h3 id="s3-title">⚡ Stage 3 — Control</h3>
+      <p id="s3-desc">The model chooses an action: COMMIT / REVISE / ABSTAIN / SEEK_EVIDENCE. This is metacognitive regulation — acting on uncertainty.</p>
+      <div style="margin-top:10px;">
+        <div class="metric-row"><span class="metric-label" id="lbl-cr">Control Rationality</span><span class="metric-val c3" id="val-cr">72.0%</span></div>
+        <div class="metric-row"><span class="metric-label">PDEMC</span><span class="metric-val c3" id="val-pdemc">0.797</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER: BRAIN CANVAS -->
+  <div class="brain-area">
+    <canvas id="brainCanvas" width="680" height="480"></canvas>
+
+    <!-- Flow Steps -->
+    <div class="flow-bar">
+      <h4 id="lbl-flow">Cognitive Flow Pipeline</h4>
+      <div class="flow-steps">
+        <div class="flow-step fs1 active" id="fs1" onclick="activateStage(1)">
+          <div>📥</div><div id="fs1-lbl">INPUT</div><div style="font-size:0.65rem;opacity:0.8" id="fs1-sub">Claim + Evidence</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step fs1 active" id="fs2" onclick="activateStage(2)">
+          <div>🧠</div><div id="fs2-lbl">DECIDE</div><div style="font-size:0.65rem;opacity:0.8" id="fs2-sub">Task 1</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step fs2 active" id="fs3" onclick="activateStage(3)">
+          <div>🔍</div><div id="fs3-lbl">MONITOR</div><div style="font-size:0.65rem;opacity:0.8" id="fs3-sub">Task 2</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step fs3" id="fs4" onclick="activateStage(4)">
+          <div>⚡</div><div id="fs4-lbl">CONTROL</div><div style="font-size:0.65rem;opacity:0.8" id="fs4-sub">Task 3</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step fs3" id="fs5" onclick="activateStage(5)">
+          <div>📤</div><div id="fs5-lbl">ACTION</div><div style="font-size:0.65rem;opacity:0.8" id="fs5-sub">Final</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collapse Meter -->
+    <div class="collapse-meter">
+      <h4 id="lbl-gap">Control Collapse Gap (Monitoring Acc − Control Rationality)</h4>
+      <div class="meter-track">
+        <div class="meter-fill" id="meterFill" style="width:11%;background:var(--accent3);"></div>
+      </div>
+      <div class="meter-labels">
+        <span id="lbl-no-collapse">No Collapse (0%)</span>
+        <span id="lbl-moderate">Moderate (20%)</span>
+        <span id="lbl-severe">Severe Collapse (40%+)</span>
+      </div>
+      <div class="meter-val" id="meterVal" style="color:var(--accent3);">Gap: +11.0%</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="side-panel">
+    <div class="info-card collapse">
+      <h3 id="cc-title">🚨 Control Collapse</h3>
+      <p id="cc-desc">The model detects likely error (high monitoring accuracy) but still COMMITs instead of abstaining. Awareness ≠ Safe Action.</p>
+      <div style="margin-top:10px;">
+        <div class="metric-row"><span class="metric-label" id="lbl-unsafe">Unsafe COMMITs</span><span class="metric-val cr" id="val-unsafe">~28%</span></div>
+        <div class="metric-row"><span class="metric-label" id="lbl-cgap">Collapse Gap</span><span class="metric-val cr" id="val-cgap">+11.0%</span></div>
+      </div>
+    </div>
+
+    <div class="info-card human-card">
+      <h3 id="hb-title">👤 Human Baseline (n=50)</h3>
+      <p id="hb-desc">A human annotator evaluated 50 randomly sampled instances using the same 3-stage protocol.</p>
+      <div style="margin-top:10px;">
+        <div class="metric-row"><span class="metric-label" id="lbl-hacc">Accuracy</span><span class="metric-val ch">88.0%</span></div>
+        <div class="metric-row"><span class="metric-label" id="lbl-hmon">Monitoring</span><span class="metric-val ch">90.0%</span></div>
+        <div class="metric-row"><span class="metric-label" id="lbl-hcr">Control Rat.</span><span class="metric-val ch">92.0%</span></div>
+        <div class="metric-row"><span class="metric-label">PDEMC</span><span class="metric-val ch">0.899</span></div>
+        <div class="metric-row"><span class="metric-label" id="lbl-hgap">Collapse Gap</span><span class="metric-val ch">−2.0%</span></div>
+      </div>
+    </div>
+
+    <div class="info-card" style="border-left:3px solid #546e7a;">
+      <h3 style="color:#90a4ae;" id="key-title">🔑 Key Insight</h3>
+      <p id="key-desc">GPT-4.1-mini: 80% monitoring accuracy yet only 48.3% control rationality. A <strong style="color:var(--collapse)">+31.7% gap</strong> proves that knowing you're wrong does not guarantee acting safely.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Results Table -->
+<div class="results-table-wrap">
+  <h3 id="tbl-title">📊 Full Model Comparison — SOEA-Plus Benchmark (300 Real PubMed Pairs)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th id="th-model">Model</th>
+        <th id="th-acc">Task 1 Accuracy</th>
+        <th id="th-mon">Monitoring Acc</th>
+        <th id="th-cr">Control Rationality</th>
+        <th id="th-gap">Collapse Gap</th>
+        <th id="th-pdemc">PDEMC Score</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
+
+<!-- Tooltip -->
+<div id="tooltip"></div>
+
+<script>
+// ── DATA ──
+const MODELS = [
+  { name:'GPT-4.1',         acc:83.0, mon:83.0, cr:72.0, soce:0.176, pdemc:0.797, conf:0.74, color:'#4fc3f7', unsafe:28 },
+  { name:'Gemini-2.5-Flash',acc:84.0, mon:79.7, cr:74.7, soce:-0.012,pdemc:0.796, conf:0.50, color:'#81c784', unsafe:20 },
+  { name:'GPT-4.1-mini',    acc:80.0, mon:80.0, cr:48.3, soce:0.181, pdemc:0.705, conf:0.76, color:'#ffb74d', unsafe:51 },
+  { name:'Llama-4-Scout',   acc:60.3, mon:62.0, cr:14.0, soce:0.376, pdemc:0.470, conf:0.79, color:'#ef5350', unsafe:74 },
+  { name:'Human Baseline',  acc:88.0, mon:90.0, cr:92.0, soce:-0.05, pdemc:0.899, conf:0.85, color:'#ce93d8', unsafe:5 },
+];
+
+let currentModel = 0;
+let animFrame = null;
+let particles = [];
+let stage = 3;
+
+// ── CANVAS SETUP ──
+const canvas = document.getElementById('brainCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+// Brain regions (x, y, rx, ry, label, stage)
+const REGIONS = [
+  { x:340, y:120, rx:110, ry:75, label:'Prefrontal Cortex\n(Decision Making)', stage:1, color:'#4fc3f7', key:'decision' },
+  { x:200, y:260, rx:90,  ry:65, label:'Anterior Cingulate\n(Error Monitoring)', stage:2, color:'#81c784', key:'monitor' },
+  { x:490, y:265, rx:90,  ry:65, label:'Dorsolateral PFC\n(Cognitive Control)', stage:3, color:'#ffb74d', key:'control' },
+  { x:340, y:390, rx:80,  ry:50, label:'Motor Output\n(Action Selection)', stage:4, color:'#b0bec5', key:'action' },
+  { x:120, y:160, rx:55,  ry:40, label:'Sensory Input\n(Claim + Evidence)', stage:0, color:'#80cbc4', key:'input' },
+  { x:560, y:160, rx:55,  ry:40, label:'Working Memory\n(Context Buffer)', stage:0, color:'#a5d6a7', key:'memory' },
+];
+
+// Neural connections
+const CONNECTIONS = [
+  { from:4, to:0, label:'encode', color:'#4fc3f7' },
+  { from:5, to:0, label:'retrieve', color:'#4fc3f7' },
+  { from:0, to:1, label:'self-eval', color:'#81c784' },
+  { from:0, to:2, label:'regulate', color:'#ffb74d' },
+  { from:1, to:2, label:'signal', color:'#ffb74d', critical:true },
+  { from:2, to:3, label:'execute', color:'#b0bec5' },
+  { from:1, to:3, label:'override', color:'#ef5350', collapse:true },
+];
+
+// ── PARTICLE SYSTEM ──
+function spawnParticle(fromIdx, toIdx, color, speed=1) {
+  const f = REGIONS[fromIdx], t = REGIONS[toIdx];
+  particles.push({
+    x: f.x, y: f.y,
+    tx: t.x, ty: t.y,
+    color, speed: speed * (0.008 + Math.random()*0.006),
+    progress: 0, size: 3 + Math.random()*2,
+    alpha: 0.9,
+  });
+}
+
+function updateParticles() {
+  particles = particles.filter(p => p.progress < 1);
+  particles.forEach(p => {
+    p.progress += p.speed;
+    p.x = REGIONS.find((_,i) => i === particles.indexOf(p))?.x || p.x; // keep ref
+    // lerp
+    const f = { x: p.x, y: p.y };
+  });
+}
+
+// ── DRAW ──
+function drawBrain() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Background gradient
+  const bg = ctx.createRadialGradient(W/2, H/2, 50, W/2, H/2, 320);
+  bg.addColorStop(0, '#0d1030');
+  bg.addColorStop(1, '#060614');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const m = MODELS[currentModel];
+  const collapseGap = m.mon - m.cr;
+  const isCollapse = collapseGap > 15;
+
+  // Draw connections
+  CONNECTIONS.forEach((conn, ci) => {
+    const f = REGIONS[conn.from], t = REGIONS[conn.to];
+    const active = isConnectionActive(conn, stage);
+    const isCollapsePath = conn.collapse && isCollapse;
+
+    ctx.save();
+    ctx.beginPath();
+    // Curved bezier
+    const mx = (f.x + t.x) / 2 + (Math.random() < 0.5 ? 30 : -30) * 0;
+    const my = (f.y + t.y) / 2;
+    ctx.moveTo(f.x, f.y);
+    ctx.quadraticCurveTo(mx + (f.x < t.x ? 20 : -20), my - 20, t.x, t.y);
+
+    if (isCollapsePath) {
+      ctx.strokeStyle = active ? '#ef5350' : 'rgba(239,83,80,0.2)';
+      ctx.lineWidth = active ? 3 : 1.5;
+      ctx.setLineDash([6, 4]);
+      if (active) {
+        ctx.shadowColor = '#ef5350';
+        ctx.shadowBlur = 12;
+      }
+    } else {
+      ctx.strokeStyle = active ? conn.color : 'rgba(255,255,255,0.06)';
+      ctx.lineWidth = active ? 2.5 : 1;
+      ctx.setLineDash([]);
+      if (active) {
+        ctx.shadowColor = conn.color;
+        ctx.shadowBlur = 8;
+      }
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Arrow head
+    if (active) {
+      drawArrow(ctx, f.x, f.y, t.x, t.y, isCollapsePath ? '#ef5350' : conn.color);
+    }
+  });
+
+  // Draw animated signal particles
+  drawParticles(m, isCollapse);
+
+  // Draw regions
+  REGIONS.forEach((reg, ri) => {
+    const isActive = isRegionActive(reg, stage);
+    const isCollapsing = reg.key === 'control' && isCollapse;
+
+    ctx.save();
+    // Glow
+    if (isActive) {
+      ctx.shadowColor = isCollapsing ? '#ef5350' : reg.color;
+      ctx.shadowBlur = 25;
+    }
+
+    // Ellipse fill
+    const grad = ctx.createRadialGradient(reg.x, reg.y, 5, reg.x, reg.y, reg.rx);
+    const baseColor = isCollapsing ? '#ef5350' : reg.color;
+    grad.addColorStop(0, hexToRgba(baseColor, isActive ? 0.35 : 0.08));
+    grad.addColorStop(1, hexToRgba(baseColor, isActive ? 0.08 : 0.02));
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(reg.x, reg.y, reg.rx, reg.ry, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Border
+    ctx.strokeStyle = isActive ? (isCollapsing ? '#ef5350' : baseColor) : hexToRgba(baseColor, 0.25);
+    ctx.lineWidth = isActive ? 2 : 1;
+    ctx.beginPath();
+    ctx.ellipse(reg.x, reg.y, reg.rx, reg.ry, 0, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.restore();
+
+    // Label
+    ctx.save();
+    ctx.font = `${isActive ? 'bold ' : ''}12px 'Segoe UI', sans-serif`;
+    ctx.fillStyle = isActive ? (isCollapsing ? '#ef5350' : baseColor) : 'rgba(200,210,230,0.5)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const lines = reg.label.split('\n');
+    lines.forEach((line, li) => {
+      ctx.fillText(line, reg.x, reg.y + (li - (lines.length-1)/2) * 15);
+    });
+    ctx.restore();
+
+    // Metric badge on active regions
+    if (isActive && reg.key !== 'input' && reg.key !== 'memory' && reg.key !== 'action') {
+      drawMetricBadge(ctx, reg, m, isCollapsing);
+    }
+  });
+
+  // Collapse warning overlay
+  if (isCollapse && stage >= 3) {
+    ctx.save();
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillStyle = '#ef5350';
+    ctx.textAlign = 'center';
+    ctx.shadowColor = '#ef5350';
+    ctx.shadowBlur = 15;
+    ctx.fillText(`⚠ CONTROL COLLAPSE GAP: +${collapseGap.toFixed(1)}%`, W/2, H - 20);
+    ctx.restore();
+  }
+
+  // Model name watermark
+  ctx.save();
+  ctx.font = 'bold 14px Segoe UI';
+  ctx.fillStyle = hexToRgba(m.color, 0.6);
+  ctx.textAlign = 'left';
+  ctx.fillText(m.name, 14, 22);
+  ctx.font = '11px Segoe UI';
+  ctx.fillStyle = 'rgba(144,164,174,0.6)';
+  ctx.fillText(`PDEMC: ${m.pdemc.toFixed(3)}`, 14, 38);
+  ctx.restore();
+}
+
+function drawMetricBadge(ctx, reg, m, isCollapsing) {
+  let val = '', label = '';
+  if (reg.key === 'decision') { val = m.acc.toFixed(1)+'%'; label = 'Acc'; }
+  else if (reg.key === 'monitor') { val = m.mon.toFixed(1)+'%'; label = 'Mon'; }
+  else if (reg.key === 'control') {
+    val = m.cr.toFixed(1)+'%'; label = 'CR';
+  }
+  if (!val) return;
+
+  const bx = reg.x + reg.rx - 10, by = reg.y - reg.ry + 10;
+  ctx.save();
+  ctx.fillStyle = isCollapsing ? 'rgba(239,83,80,0.9)' : hexToRgba(reg.color, 0.9);
+  roundRect(ctx, bx - 22, by - 10, 44, 20, 5);
+  ctx.fill();
+  ctx.font = 'bold 11px Segoe UI';
+  ctx.fillStyle = '#000';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(val, bx, by);
+  ctx.restore();
+}
+
+function drawArrow(ctx, fx, fy, tx, ty, color) {
+  const angle = Math.atan2(ty - fy, tx - fx);
+  const len = 8;
+  const ex = tx - Math.cos(angle) * 15;
+  const ey = ty - Math.sin(angle) * 15;
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(ex + Math.cos(angle) * len, ey + Math.sin(angle) * len);
+  ctx.lineTo(ex + Math.cos(angle + 2.4) * len * 0.6, ey + Math.sin(angle + 2.4) * len * 0.6);
+  ctx.lineTo(ex + Math.cos(angle - 2.4) * len * 0.6, ey + Math.sin(angle - 2.4) * len * 0.6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+// Animated signal dots along connections
+let signalTime = 0;
+function drawParticles(m, isCollapse) {
+  signalTime += 0.012;
+  const activeConns = CONNECTIONS.filter((c, ci) => isConnectionActive(c, stage));
+
+  activeConns.forEach((conn, ci) => {
+    const f = REGIONS[conn.from], t = REGIONS[conn.to];
+    const t_val = (signalTime * 0.8 + ci * 0.4) % 1;
+    const isCollapsePath = conn.collapse && isCollapse;
+
+    // Bezier point
+    const mx = (f.x + t.x) / 2 + (f.x < t.x ? 20 : -20);
+    const my = (f.y + t.y) / 2 - 20;
+    const px = bezier(f.x, mx, t.x, t_val);
+    const py = bezier(f.y, my, t.y, t_val);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(px, py, isCollapsePath ? 5 : 4, 0, Math.PI*2);
+    ctx.fillStyle = isCollapsePath ? '#ef5350' : conn.color;
+    ctx.shadowColor = isCollapsePath ? '#ef5350' : conn.color;
+    ctx.shadowBlur = 12;
+    ctx.fill();
+    ctx.restore();
+
+    // Trail
+    for (let i = 1; i <= 3; i++) {
+      const tt = Math.max(0, t_val - i * 0.04);
+      const ppx = bezier(f.x, mx, t.x, tt);
+      const ppy = bezier(f.y, my, t.y, tt);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(ppx, ppy, (4-i)*0.8, 0, Math.PI*2);
+      ctx.fillStyle = hexToRgba(isCollapsePath ? '#ef5350' : conn.color, 0.3 - i*0.08);
+      ctx.fill();
+      ctx.restore();
+    }
+  });
+}
+
+function bezier(p0, p1, p2, t) {
+  return (1-t)*(1-t)*p0 + 2*(1-t)*t*p1 + t*t*p2;
+}
+
+function isConnectionActive(conn, s) {
+  if (s >= 5) return true;
+  if (s === 1) return conn.from === 4 || conn.from === 5 || conn.to === 0;
+  if (s === 2) return conn.from === 0 && conn.to === 1;
+  if (s === 3) return conn.from === 1 || conn.from === 0;
+  if (s === 4) return conn.to === 3;
+  return false;
+}
+
+function isRegionActive(reg, s) {
+  if (s >= 5) return true;
+  if (s === 1) return reg.key === 'input' || reg.key === 'memory' || reg.key === 'decision';
+  if (s === 2) return reg.key === 'decision' || reg.key === 'monitor';
+  if (s === 3) return reg.key === 'monitor' || reg.key === 'control';
+  if (s === 4) return reg.key === 'control' || reg.key === 'action';
+  return false;
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+// ── ANIMATION LOOP ──
+function animate() {
+  drawBrain();
+  animFrame = requestAnimationFrame(animate);
+}
+
+// ── MODEL SELECTION ──
+function selectModel(idx) {
+  currentModel = idx;
+  document.querySelectorAll('.model-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  updatePanels();
+}
+
+function updatePanels() {
+  const m = MODELS[currentModel];
+  const gap = m.mon - m.cr;
+  const isCollapse = gap > 15;
+
+  // Left panel
+  document.getElementById('val-acc').textContent = m.acc.toFixed(1)+'%';
+  document.getElementById('val-conf').textContent = m.conf.toFixed(2);
+  document.getElementById('val-mon').textContent = m.mon.toFixed(1)+'%';
+  document.getElementById('val-soce').textContent = (m.soce >= 0 ? '+' : '') + m.soce.toFixed(3);
+  document.getElementById('val-cr').textContent = m.cr.toFixed(1)+'%';
+  document.getElementById('val-pdemc').textContent = m.pdemc.toFixed(3);
+
+  // Right panel
+  document.getElementById('val-unsafe').textContent = '~' + m.unsafe + '%';
+  document.getElementById('val-cgap').textContent = (gap >= 0 ? '+' : '') + gap.toFixed(1) + '%';
+
+  // Collapse meter
+  const meterFill = document.getElementById('meterFill');
+  const meterVal = document.getElementById('meterVal');
+  const pct = Math.min(Math.max(gap, 0), 50);
+  meterFill.style.width = (pct / 50 * 100) + '%';
+  if (gap > 25) {
+    meterFill.style.background = 'var(--collapse)';
+    meterVal.style.color = 'var(--collapse)';
+  } else if (gap > 10) {
+    meterFill.style.background = 'var(--accent3)';
+    meterVal.style.color = 'var(--accent3)';
+  } else {
+    meterFill.style.background = 'var(--accent2)';
+    meterVal.style.color = 'var(--accent2)';
+  }
+  meterVal.textContent = (currentLang === 'ar' ? 'الفجوة: ' : 'Gap: ') + (gap >= 0 ? '+' : '') + gap.toFixed(1) + '%';
+
+  // Flow step 4 collapse state
+  const fs4 = document.getElementById('fs4');
+  fs4.classList.toggle('collapse-state', isCollapse);
+
+  updateTable();
+}
+
+// ── STAGE ACTIVATION ──
+function activateStage(s) {
+  stage = s;
+  ['fs1','fs2','fs3','fs4','fs5'].forEach((id, i) => {
+    document.getElementById(id).classList.toggle('active', i < s);
+  });
+}
+
+// ── TABLE ──
+function updateTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  MODELS.forEach((m, i) => {
+    const gap = m.mon - m.cr;
+    const isSelected = i === currentModel;
+    const isHuman = m.name === 'Human Baseline';
+    const tr = document.createElement('tr');
+    if (isSelected) tr.style.background = hexToRgba(m.color, 0.08);
+
+    const barW = (v) => Math.round(v);
+    tr.innerHTML = `
+      <td style="text-align:left;font-weight:${isSelected?'700':'400'};color:${m.color}">
+        ${isSelected ? '▶ ' : ''}${m.name}${isHuman ? ' 👤' : ''}
+      </td>
+      <td class="bar-cell">
+        <span class="mini-bar" style="width:${barW(m.acc)}px;background:${m.color};opacity:0.7"></span>
+        <span style="color:${m.color};font-weight:600">${m.acc.toFixed(1)}%</span>
+      </td>
+      <td class="bar-cell">
+        <span class="mini-bar" style="width:${barW(m.mon)}px;background:#81c784;opacity:0.7"></span>
+        <span style="color:#81c784;font-weight:600">${m.mon.toFixed(1)}%</span>
+      </td>
+      <td class="bar-cell">
+        <span class="mini-bar" style="width:${barW(m.cr)}px;background:${gap>20?'#ef5350':'#ffb74d'};opacity:0.7"></span>
+        <span style="color:${gap>20?'#ef5350':'#ffb74d'};font-weight:600">${m.cr.toFixed(1)}%</span>
+      </td>
+      <td style="color:${gap>20?'#ef5350':gap>10?'#ffb74d':'#81c784'};font-weight:700">
+        ${gap>=0?'+':''}${gap.toFixed(1)}% ${gap>25?'🚨':gap>10?'⚠️':'✅'}
+      </td>
+      <td style="color:${m.color};font-weight:700">${m.pdemc.toFixed(3)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── CANVAS HOVER TOOLTIP ──
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = W / rect.width;
+  const scaleY = H / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+
+  const tip = document.getElementById('tooltip');
+  let found = null;
+
+  REGIONS.forEach(reg => {
+    const dx = (mx - reg.x) / reg.rx;
+    const dy = (my - reg.y) / reg.ry;
+    if (dx*dx + dy*dy < 1) found = reg;
+  });
+
+  if (found) {
+    const m = MODELS[currentModel];
+    let content = `<strong>${found.label.replace('\n',' ')}</strong>`;
+    if (found.key === 'decision') content += `Accuracy: ${m.acc}%<br>Confidence: ${m.conf.toFixed(2)}<br>SOCE: ${m.soce >= 0 ? '+' : ''}${m.soce.toFixed(3)}`;
+    else if (found.key === 'monitor') content += `Monitoring Acc: ${m.mon}%<br>Detects own errors: ${m.mon > 75 ? 'Yes ✓' : 'Partially ⚠'}`;
+    else if (found.key === 'control') {
+      const gap = m.mon - m.cr;
+      content += `Control Rationality: ${m.cr}%<br>Collapse Gap: ${gap >= 0 ? '+' : ''}${gap.toFixed(1)}%<br>${gap > 20 ? '🚨 CONTROL COLLAPSE DETECTED' : gap > 10 ? '⚠ Partial collapse' : '✅ Healthy control'}`;
+    }
+    else if (found.key === 'action') content += `PDEMC Score: ${m.pdemc.toFixed(3)}<br>Final behavioral output`;
+    else if (found.key === 'input') content += `300 real PubMed claim-evidence pairs<br>Gold-standard annotated`;
+    else if (found.key === 'memory') content += `Context window: prior reasoning<br>No new evidence in Task 3`;
+    tip.innerHTML = content;
+    tip.style.display = 'block';
+    tip.style.left = (e.clientX + 14) + 'px';
+    tip.style.top = (e.clientY - 10) + 'px';
+  } else {
+    tip.style.display = 'none';
+  }
+});
+canvas.addEventListener('mouseleave', () => {
+  document.getElementById('tooltip').style.display = 'none';
+});
+
+// ── LANGUAGE ──
+let currentLang = 'en';
+const TEXTS = {
+  en: {
+    'h-title': 'SOEA-Plus: Metacognition Brain Map',
+    'h-sub': 'How does an LLM think about its own thinking? — Interactive Neural Pathway Visualization',
+    'lbl-select': 'Select Model:',
+    'lbl-human': 'Human Baseline',
+    's1-title': '🧠 Stage 1 — Decision',
+    's1-desc': 'The model reads the claim and evidence, then classifies: SUPPORTED / REFUTED / INCONCLUSIVE. This is first-order cognition — knowing the answer.',
+    's2-title': '🔍 Stage 2 — Monitoring',
+    's2-desc': 'The model estimates: "How likely am I wrong?" This is second-order cognition — knowing about knowing. SOCE measures directional miscalibration.',
+    's3-title': '⚡ Stage 3 — Control',
+    's3-desc': 'The model chooses an action: COMMIT / REVISE / ABSTAIN / SEEK_EVIDENCE. This is metacognitive regulation — acting on uncertainty.',
+    'lbl-acc': 'Accuracy', 'lbl-conf': 'Avg Confidence', 'lbl-mon': 'Monitoring Acc',
+    'lbl-cr': 'Control Rationality', 'lbl-flow': 'Cognitive Flow Pipeline',
+    'fs1-lbl': 'INPUT', 'fs1-sub': 'Claim + Evidence',
+    'fs2-lbl': 'DECIDE', 'fs2-sub': 'Task 1',
+    'fs3-lbl': 'MONITOR', 'fs3-sub': 'Task 2',
+    'fs4-lbl': 'CONTROL', 'fs4-sub': 'Task 3',
+    'fs5-lbl': 'ACTION', 'fs5-sub': 'Final',
+    'lbl-gap': 'Control Collapse Gap (Monitoring Acc − Control Rationality)',
+    'lbl-no-collapse': 'No Collapse (0%)', 'lbl-moderate': 'Moderate (20%)', 'lbl-severe': 'Severe Collapse (40%+)',
+    'cc-title': '🚨 Control Collapse',
+    'cc-desc': 'The model detects likely error (high monitoring accuracy) but still COMMITs instead of abstaining. Awareness ≠ Safe Action.',
+    'lbl-unsafe': 'Unsafe COMMITs', 'lbl-cgap': 'Collapse Gap',
+    'hb-title': '👤 Human Baseline (n=50)',
+    'hb-desc': 'A human annotator evaluated 50 randomly sampled instances using the same 3-stage protocol.',
+    'lbl-hacc': 'Accuracy', 'lbl-hmon': 'Monitoring', 'lbl-hcr': 'Control Rat.', 'lbl-hgap': 'Collapse Gap',
+    'key-title': '🔑 Key Insight',
+    'key-desc': 'GPT-4.1-mini: 80% monitoring accuracy yet only 48.3% control rationality. A <strong style="color:var(--collapse)">+31.7% gap</strong> proves that knowing you\'re wrong does not guarantee acting safely.',
+    'tbl-title': '📊 Full Model Comparison — SOEA-Plus Benchmark (300 Real PubMed Pairs)',
+    'th-model': 'Model', 'th-acc': 'Task 1 Accuracy', 'th-mon': 'Monitoring Acc',
+    'th-cr': 'Control Rationality', 'th-gap': 'Collapse Gap', 'th-pdemc': 'PDEMC Score',
+  },
+  ar: {
+    'h-title': 'SOEA-Plus: خريطة الإدراك الذاتي في الدماغ',
+    'h-sub': 'كيف يفكر النموذج اللغوي في تفكيره الخاص؟ — تصور تفاعلي للمسارات العصبية',
+    'lbl-select': 'اختر النموذج:',
+    'lbl-human': 'المقيّم البشري',
+    's1-title': '🧠 المرحلة 1 — القرار',
+    's1-desc': 'يقرأ النموذج الادعاء والدليل ثم يصنّف: مدعوم / مرفوض / غير حاسم. هذا إدراك من الدرجة الأولى — معرفة الإجابة.',
+    's2-title': '🔍 المرحلة 2 — المراقبة',
+    's2-desc': 'يقدّر النموذج: "ما احتمال أنني مخطئ؟" هذا إدراك من الدرجة الثانية — معرفة ما تعرفه. يقيس SOCE الخطأ الاتجاهي في المعايرة.',
+    's3-title': '⚡ المرحلة 3 — التحكم',
+    's3-desc': 'يختار النموذج إجراءً: الالتزام / المراجعة / الامتناع / طلب الدليل. هذا هو التنظيم الميتامعرفي — التصرف في ظل عدم اليقين.',
+    'lbl-acc': 'الدقة', 'lbl-conf': 'متوسط الثقة', 'lbl-mon': 'دقة المراقبة',
+    'lbl-cr': 'عقلانية التحكم', 'lbl-flow': 'مسار التدفق المعرفي',
+    'fs1-lbl': 'الإدخال', 'fs1-sub': 'الادعاء + الدليل',
+    'fs2-lbl': 'القرار', 'fs2-sub': 'المهمة 1',
+    'fs3-lbl': 'المراقبة', 'fs3-sub': 'المهمة 2',
+    'fs4-lbl': 'التحكم', 'fs4-sub': 'المهمة 3',
+    'fs5-lbl': 'الإجراء', 'fs5-sub': 'النهائي',
+    'lbl-gap': 'فجوة انهيار التحكم (دقة المراقبة − عقلانية التحكم)',
+    'lbl-no-collapse': 'لا انهيار (0%)', 'lbl-moderate': 'متوسط (20%)', 'lbl-severe': 'انهيار شديد (40%+)',
+    'cc-title': '🚨 انهيار التحكم',
+    'cc-desc': 'يكتشف النموذج الخطأ المحتمل (دقة مراقبة عالية) لكنه لا يزال يلتزم بدلاً من الامتناع. الوعي ≠ التصرف الآمن.',
+    'lbl-unsafe': 'التزامات غير آمنة', 'lbl-cgap': 'فجوة الانهيار',
+    'hb-title': '👤 الأساس البشري (ن=50)',
+    'hb-desc': 'قيّم مُحلّل بشري 50 مثالاً مُختاراً عشوائياً باستخدام نفس البروتوكول ثلاثي المراحل.',
+    'lbl-hacc': 'الدقة', 'lbl-hmon': 'المراقبة', 'lbl-hcr': 'عقلانية التحكم', 'lbl-hgap': 'فجوة الانهيار',
+    'key-title': '🔑 الاستنتاج الرئيسي',
+    'key-desc': 'GPT-4.1-mini: دقة مراقبة 80% لكن عقلانية تحكم 48.3% فقط. فجوة <strong style="color:var(--collapse)">+31.7%</strong> تثبت أن معرفة خطئك لا تضمن التصرف بأمان.',
+    'tbl-title': '📊 مقارنة كاملة للنماذج — معيار SOEA-Plus (300 زوج PubMed حقيقي)',
+    'th-model': 'النموذج', 'th-acc': 'دقة المهمة 1', 'th-mon': 'دقة المراقبة',
+    'th-cr': 'عقلانية التحكم', 'th-gap': 'فجوة الانهيار', 'th-pdemc': 'درجة PDEMC',
+  }
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btnEN').classList.toggle('active', lang==='en');
+  document.getElementById('btnAR').classList.toggle('active', lang==='ar');
+  document.body.classList.toggle('rtl', lang==='ar');
+  document.documentElement.lang = lang;
+  const T = TEXTS[lang];
+  Object.keys(T).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = T[id];
+  });
+  updatePanels();
+}
+
+// ── AUTO-STAGE CYCLE ──
+let stageTimer = 0;
+function autoAdvance() {
+  stageTimer++;
+  if (stageTimer % 180 === 0) {
+    stage = (stage % 5) + 1;
+    activateStage(stage);
+  }
+}
+
+// ── MAIN LOOP ──
+function loop() {
+  autoAdvance();
+  drawBrain();
+  requestAnimationFrame(loop);
+}
+
+// ── INIT ──
+updatePanels();
+updateTable();
+activateStage(5);
+loop();
+</script>
+</body>
+</html>
