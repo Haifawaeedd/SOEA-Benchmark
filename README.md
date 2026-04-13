@@ -152,7 +152,7 @@ SOEA-Benchmark/
 ├── soea_plus/                           # 🌟 NEW: SOEA-Plus (PDEMC) Benchmark
 │   ├── SOEA_PLUS_COMPETITION_WRITEUP.md # Full competition report
 │   ├── scripts/                         # 3-task evaluation scripts
-│   ├── results/                         # Results for 3 frontier models
+│   ├── results/                         # Results for 4 frontier models (GPT-4.1, Gemini, GPT-4.1-mini, Llama-4-Scout)
 │   └── figures/                         # Visualizations and diagrams
 ├── data/
 │   └── SOEA_300_gold_FINAL.csv          # Gold-standard annotated dataset

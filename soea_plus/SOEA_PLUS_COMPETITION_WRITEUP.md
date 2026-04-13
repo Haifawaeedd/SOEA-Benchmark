@@ -49,7 +49,7 @@ Control Rationality is evaluated conditionally on Task 1 correctness:
 - **If the model is incorrect:** `REVISE`, `ABSTAIN`, or `SEEK_EVIDENCE` = rational; `COMMIT` = irrational.
 - **If the model is correct:** `COMMIT` = rational; `REVISE`, `ABSTAIN`, or `SEEK_EVIDENCE` = non-optimal.
 
-We evaluated three frontier models: GPT-4.1, GPT-4.1-mini, and Gemini-2.5-Flash.
+We evaluated four frontier models: GPT-4.1, GPT-4.1-mini, Gemini-2.5-Flash, and Llama-4-Scout.
 
 ### Results, insights, and conclusions
 ![Control Collapse](figures/soea_plus_control_collapse.png)
