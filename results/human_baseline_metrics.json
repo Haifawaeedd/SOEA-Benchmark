@@ -1,0 +1,52 @@
+{
+  "human_baseline": {
+    "acc": 91.0,
+    "soce": -0.018,
+    "cr": 88.3,
+    "reo": 0.3821,
+    "aur": 6.2,
+    "pdemc": 0.929
+  },
+  "all_models": {
+    "Human Baseline": {
+      "acc": 91.0,
+      "soce": -0.018,
+      "cr": 88.3,
+      "pdemc": 0.929,
+      "reo": 0.3821,
+      "aur": 6.2
+    },
+    "GPT-4.1": {
+      "acc": 86.7,
+      "soce": 0.072,
+      "cr": 61.7,
+      "pdemc": 0.682,
+      "reo": 0.5659,
+      "aur": 26.5
+    },
+    "GPT-4.1-mini": {
+      "acc": 80.0,
+      "soce": 0.1806,
+      "cr": 48.3,
+      "pdemc": 0.561,
+      "reo": 0.8263,
+      "aur": 55.4
+    },
+    "Gemini-2.5 Flash": {
+      "acc": 84.0,
+      "soce": -0.0121,
+      "cr": 73.3,
+      "pdemc": 0.756,
+      "reo": 0.4252,
+      "aur": 30.3
+    },
+    "Llama-4 Scout": {
+      "acc": 60.3,
+      "soce": 0.3763,
+      "cr": 14.0,
+      "pdemc": 0.47,
+      "reo": 0.7878,
+      "aur": 0.0
+    }
+  }
+}
