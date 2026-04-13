@@ -76,9 +76,9 @@ We split the 300 gold samples into their true medical subdomains (Oncology, Card
 | Model | Task 1 Acc | Monitoring Acc | Control Rationality | PDEMC Score |
 |-------|------------|----------------|---------------------|-------------|
 | **GPT-4.1** | 83.0% | **83.0%** | 72.0% | **0.7970** |
-| **Gemini-2.5-Flash** | **84.0%** | 79.7% | **74.7%** | 0.7957 |
+| **Gemini-2.5-Flash** | **84.0%** | 79.7% | **74.7%** | 0.7990 |
 | **GPT-4.1-mini** | 80.0% | 80.0% | 48.3% | 0.7050 |
-| **Llama-4-Scout** | 60.3% | 62.0% | 14.0% | 0.4700 |
+| **Llama-4-Scout** | 60.3% | 62.4% | 14.0% | 0.4703 |
 
 The results reveal a striking dissociation: GPT-4.1-mini achieves 80.0% Monitoring Accuracy yet only 48.3% Control Rationality — a **+31.7 percentage point Control Collapse Gap** — confirming that metacognitive awareness does not automatically translate into safe behavior. Gemini-2.5-Flash achieves the highest Control Rationality (74.7%) and is the only model that actively uses `REVISE` in a meaningful fraction of cases.
 
